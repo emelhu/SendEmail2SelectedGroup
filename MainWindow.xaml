@@ -1,0 +1,155 @@
+﻿<Window x:Class="SendEmail2SelectedGroup.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SendEmail2SelectedGroup"
+        mc:Ignorable="d"
+            
+        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200">
+
+    <Window.Resources>
+        <local:SettingViewModel x:Key="vm" />
+    </Window.Resources>
+
+    <TabControl DataContext="{StaticResource ResourceKey=vm }">
+        <!--#region Beállítások Tab -->
+        <TabItem Header="Beállítások" Background="DimGray" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="4" HorizontalAlignment="Center" >
+                    *  A körlevél összeállításának paramétereit, alapadatait határozhatja meg ezen a lapon  *
+                </TextBlock>
+
+                <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite">
+                    <StackPanel Orientation="Vertical">
+                        
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel LastChildFill="False">
+                                <Label Width="180">Adatállomány:</Label>
+                                <TextBox Width="500" VerticalContentAlignment="Center" Foreground="DarkBlue"
+                                         Text="{Binding profil.xmlfile}" />
+                                
+                                <Button x:Name="SettingFindXlsx" Margin="12,0,0,0" Click="SettingFindXlsx_Click">Adatállomány keresése</Button>
+                                
+                                <Button x:Name="SettingCreateSampleXlsx" DockPanel.Dock="Right" Click="SettingCreateSampleXlsx_Click">Minta XLSX létrehozása</Button>
+                                
+                            </DockPanel>
+                        </Border>
+
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel>
+
+                            </DockPanel>
+                        </Border>
+
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel>
+
+                            </DockPanel>
+                        </Border>
+
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel>
+
+                            </DockPanel>
+                        </Border>
+
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel>
+
+                            </DockPanel>
+                        </Border>
+
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel>
+
+                            </DockPanel>
+                        </Border>
+
+                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                            <DockPanel>
+
+                            </DockPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False">
+                    <Border Width="200" DockPanel.Dock="Left" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
+
+                            <ComboBox x:Name="SettingSelectProfil" Margin="4,0,4,4" SelectionChanged="SettingSelectProfil_SelectionChanged"
+                                      ItemsSource="{Binding profils.names}" 
+                                      SelectedItem="{Binding profils.last}" 
+                                      IsSynchronizedWithCurrentItem="True" 
+                                      Text="Válassz..." />   
+
+                            <Button x:Name="SettingNewProfil"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
+                        </StackPanel>
+                    </Border>
+
+                    <Border DockPanel.Dock="Left" Width="80" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
+                        <Button x:Name="SettingSaveProfil" Height="70" Width="70" Click="SettingSaveProfil_Click">
+                            <TextBlock TextWrapping="Wrap" >Profil adatok mentése</TextBlock>
+                        </Button>
+                    </Border>
+
+                    <Button x:Name="ProfilNextButton" DockPanel.Dock="Right" Width="100" Click="ProfilNextButton_Click">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Tovább" />
+                            <TextBlock Width="40" Height="30" Background="{StaticResource right_arrow_blue}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="ProfilExitButton" DockPanel.Dock="Right" Width="100">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Kilép" />
+                            <TextBlock Width="40" Height="30" Background="{StaticResource up_arrow_red}" />
+                        </StackPanel>
+                    </Button>
+                </DockPanel>
+            </Grid>
+        </TabItem>
+        <!--#endregion-->
+
+        <!--#region Adatállomány tartalmának megtekintése Tab -->
+        <TabItem Header="Adatállomány tartalmának megtekintése">
+            <Grid Background="#FFE5E5E5">
+
+            </Grid>
+        </TabItem>
+        <!--#endregion-->
+
+        <!--#region Címzettek kiválogatása Tab -->
+        <TabItem Header="Címzettek kiválogatása">
+            <Grid Background="#FFE5E5E5">
+
+            </Grid>
+        </TabItem>
+        <!--#endregion-->
+
+        <!--#region Levél szövegének összeállítása Tab -->
+        <TabItem Header="Levél szövegének összeállítása">
+            <Grid Background="#FFE5E5E5">
+
+            </Grid>
+        </TabItem>
+        <!--#endregion-->
+
+        <!--#region Kör email elküldése Tab -->
+        <TabItem Header="Kör email elküldése">
+            <Grid Background="#FFE5E5E5">
+
+            </Grid>
+        </TabItem>
+        <!--#endregion-->
+    </TabControl>
+
+</Window>
