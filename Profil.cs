@@ -12,37 +12,37 @@ namespace SendEmail2SelectedGroup
     [Serializable]
     public class Profil
     {
-        public string name    { get; set; }
-        public string xmlfile { get; set; } 
+        public  string name     { get; set; }
+        public  string dataFile { get; set; } 
 
-        public Profil()
-        {   // For design time
-            #if DEBUG
-            this.name     = "DesignTime";
-            this.xmlfile  = "DesignTime.XML";
-            #else
-            this.name     = String.Empty;
-            this.xmlfile  = String.Empty;
-            #endif
+        public static string? xmlDirectory;
+        public static string  xmlDirectoryChecked => xmlDirectory ?? NullException();
 
+        private static string NullException()
+        {
+            throw new ArgumentNullException("A 'Profil.xmlDirectory' kitöltése kötelező!");
+        }
+
+        public Profil() : this(ProfilNames.defaultName)
+        {   // For design time           
         }
 
         public Profil(string name)
         {
-            this.name     = name;
-            this.xmlfile  = String.Empty;
+            this.name      = name.Trim();
+            this.dataFile  = "Profil_" + name + ".XLSX";
         }
 
-        public void SaveAsXML(string directory)
+        public void SaveAsXML()
         {
-            var filename = Path.Combine(directory, $"Profil_{name}.xml");
+            var filename = Path.Combine(xmlDirectoryChecked, $"Profil_{name}.xml");
 
             this.SaveAsXML<Profil>(filename);
         }
 
-        public static Profil LoadFromXML(string directory, string name)
+        public static Profil LoadFromXML(string name)
         {
-            var filename = Path.Combine(directory, $"Profil_{name}.xml");
+            var filename = Path.Combine(xmlDirectoryChecked, $"Profil_{name}.xml");
 
             if (! File.Exists(filename))
             {
@@ -52,6 +52,7 @@ namespace SendEmail2SelectedGroup
 
             return SerializationExtensions.LoadFromXML<Profil>(filename) ?? new Profil(name);
         }
+
     }
 
     //
@@ -70,19 +71,19 @@ namespace SendEmail2SelectedGroup
             this.names.Add(defaultName);
         }
 
-        private const string xmlFileName = "ProfilNames.xml";
-        private const string defaultName = "Alapertelmezett";
+        public const string xmlFileName = "ProfilNames.xml";
+        public const string defaultName = "Alapertelmezett";
 
-        public void SaveAsXML(string directory)
+        public void SaveAsXML()
         {
-            var filename = Path.Combine(directory, xmlFileName);
+            var filename = Path.Combine(Profil.xmlDirectoryChecked, xmlFileName);
 
             this.SaveAsXML<ProfilNames>(filename);
         }
 
-        public static ProfilNames LoadFromXML(string directory)
+        public static ProfilNames LoadFromXML()
         {
-            var filename = Path.Combine(directory, xmlFileName);
+            var filename = Path.Combine(Profil.xmlDirectoryChecked, xmlFileName);
 
             if (! File.Exists(filename))
             {

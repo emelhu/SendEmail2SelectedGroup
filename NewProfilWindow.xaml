@@ -1,0 +1,49 @@
+﻿<Window x:Class="SendEmail2SelectedGroup.NewProfilWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SendEmail2SelectedGroup"
+        mc:Ignorable="d"
+        Title="Új profil létrehozása" Height="320" Width="504">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"  BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4" Background="BlanchedAlmond">
+            <TextBlock Background="BlanchedAlmond" Foreground="#FF948585" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto">
+                Új körlevél profilt hozhat létre
+            </TextBlock>
+        </Border>
+
+
+        <Border Grid.Row="1"  BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="4,0,4,4" Padding="4" Background="AntiqueWhite">
+
+        </Border>
+
+
+        <Border Grid.Row="2"  BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="4,0,4,4" Padding="4" Background="BlanchedAlmond">
+            <DockPanel x:Name="SettingBottom"  LastChildFill="False">
+
+                <Button x:Name="saveButton" DockPanel.Dock="Right" Width="100" 
+                    IsEnabled="{Binding saveEnable}">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Létrehozás" />
+                        <TextBlock Width="30" Height="20" Background="{StaticResource right_arrow_blue}" />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="canceButton" DockPanel.Dock="Right" Width="100" Margin="0,0,8,0"  >
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Mégsem" />
+                        <TextBlock Width="30" Height="20" Background="{StaticResource up_arrow_red}" />
+                    </StackPanel>
+                </Button>
+
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -39,14 +39,20 @@ namespace SendEmail2SelectedGroup
 
         public MainWindow()
         {
+            Profil.xmlDirectory = appDir;
+            setting = new SettingViewModel();
+            setting.profils = ProfilNames.LoadFromXML();
+            setting.profil  = Profil.LoadFromXML(setting.profils.last);
+
             InitializeComponent();
 
-            setting = new SettingViewModel();
+            // DataContext = setting;           --> MainGrid_Initialized
+        }
 
-            setting.profils = ProfilNames.LoadFromXML(appDir);
-            setting.profil  = Profil.LoadFromXML(appDir, setting.profils.last);
-
-            DataContext = setting;
+        private void MainGrid_Initialized(object sender, EventArgs e)
+        {
+            MainGrid.DataContext = setting;
+            //setting.Refresh();
         }
 
         private void SettingSelectProfil_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -55,9 +61,9 @@ namespace SendEmail2SelectedGroup
 
             Debug.Assert(selectedName != null);
 
-            if ((selectedName != null) && (selectedName != setting.profils.last))
+            if ((selectedName != null) && (setting?.profils?.last != null) && (selectedName != setting.profils.last))
             {
-                setting.profil       = Profil.LoadFromXML(appDir, selectedName);
+                setting.profil       = Profil.LoadFromXML(selectedName);
                 setting.profils.last = selectedName;
 
                 setting.Refresh();
@@ -71,14 +77,16 @@ namespace SendEmail2SelectedGroup
 
         private void SettingSaveProfil_Click(object sender, RoutedEventArgs e)
         {
-            //TODO
+            setting.profil.SaveAsXML(); 
+            setting.profils.SaveAsXML();
+            setting.modified = false;
         }
 
         private void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
         {
             //TODO
 
-            setting.profil.xmlfile = "betöltött";
+            setting.profil.dataFile = "betöltött";
 
             setting.Refresh();
         }
@@ -87,12 +95,12 @@ namespace SendEmail2SelectedGroup
         {
             //TODO
 
-            setting.profil.xmlfile = "létrehozott";
+            setting.profil.dataFile = "létrehozott";
 
             setting.Refresh();
         }
 
-        private void ProfilNextButton_Click(object sender, RoutedEventArgs e)
+        private void ProfilPrevNextButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO
         }
@@ -100,6 +108,6 @@ namespace SendEmail2SelectedGroup
         private void ProfilExitButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO
-        }
+        }       
     }
 }

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendEmail2SelectedGroup", "SendEmail2SelectedGroup.csproj", "{90D4237F-3F64-4313-8062-033FA012C6F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendEmail2SelectedGroup", ".\SendEmail2SelectedGroup.csproj", "{90D4237F-3F64-4313-8062-033FA012C6F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMeL_CommonStandardLibrary", "..\..\..\CommonStandardLibraries\eMeL_CommonStandardLibrary\eMeL_CommonStandardLibrary.csproj", "{4C8CE8FA-98B6-48B6-B922-ED2EC3E0C658}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMeL_CommonStandardLibrary", "..\..\CommonStandardLibraries\eMeL_CommonStandardLibrary\eMeL_CommonStandardLibrary.csproj", "{4C8CE8FA-98B6-48B6-B922-ED2EC3E0C658}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPPlus.SimpleTable", "..\..\..\Commons\EPPlus_SimpleTable\EPPlus_SimpleTable\EPPlus.SimpleTable.csproj", "{307F7E6A-3CCE-4128-B39A-24664D81415E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPPlus.SimpleTable", "..\..\Commons\EPPlus_SimpleTable\EPPlus_SimpleTable\EPPlus.SimpleTable.csproj", "{307F7E6A-3CCE-4128-B39A-24664D81415E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

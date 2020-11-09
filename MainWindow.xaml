@@ -6,20 +6,28 @@
         xmlns:local="clr-namespace:SendEmail2SelectedGroup"
         mc:Ignorable="d"
             
-        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200">
+        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200"        
+>
 
     <Window.Resources>
         <local:SettingViewModel x:Key="vm" />
     </Window.Resources>
 
-    <TabControl DataContext="{StaticResource ResourceKey=vm }">
+    <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=vm }" Initialized="MainGrid_Initialized" >
+        <!-- MainWindow.xaml.cs / MainGrid_Initialized :  MainGrid.DataContext = viewmodel; -->
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl Grid.Row="0" >
         <!--#region Beállítások Tab -->
         <TabItem Header="Beállítások" Background="DimGray" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="4" HorizontalAlignment="Center" >
@@ -33,7 +41,7 @@
                             <DockPanel LastChildFill="False">
                                 <Label Width="180">Adatállomány:</Label>
                                 <TextBox Width="500" VerticalContentAlignment="Center" Foreground="DarkBlue"
-                                         Text="{Binding profil.xmlfile}" />
+                                         Text="{Binding profil.dataFile}" />
                                 
                                 <Button x:Name="SettingFindXlsx" Margin="12,0,0,0" Click="SettingFindXlsx_Click">Adatállomány keresése</Button>
                                 
@@ -79,42 +87,7 @@
                         </Border>
                     </StackPanel>
                 </ScrollViewer>
-
-                <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False">
-                    <Border Width="200" DockPanel.Dock="Left" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
-
-                            <ComboBox x:Name="SettingSelectProfil" Margin="4,0,4,4" SelectionChanged="SettingSelectProfil_SelectionChanged"
-                                      ItemsSource="{Binding profils.names}" 
-                                      SelectedItem="{Binding profils.last}" 
-                                      IsSynchronizedWithCurrentItem="True" 
-                                      Text="Válassz..." />   
-
-                            <Button x:Name="SettingNewProfil"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
-                        </StackPanel>
-                    </Border>
-
-                    <Border DockPanel.Dock="Left" Width="80" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
-                        <Button x:Name="SettingSaveProfil" Height="70" Width="70" Click="SettingSaveProfil_Click">
-                            <TextBlock TextWrapping="Wrap" >Profil adatok mentése</TextBlock>
-                        </Button>
-                    </Border>
-
-                    <Button x:Name="ProfilNextButton" DockPanel.Dock="Right" Width="100" Click="ProfilNextButton_Click">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Tovább" />
-                            <TextBlock Width="40" Height="30" Background="{StaticResource right_arrow_blue}" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button x:Name="ProfilExitButton" DockPanel.Dock="Right" Width="100">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Kilép" />
-                            <TextBlock Width="40" Height="30" Background="{StaticResource up_arrow_red}" />
-                        </StackPanel>
-                    </Button>
-                </DockPanel>
+               
             </Grid>
         </TabItem>
         <!--#endregion-->
@@ -152,4 +125,50 @@
         <!--#endregion-->
     </TabControl>
 
+        <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False">
+            <Border Width="200" DockPanel.Dock="Left" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
+
+                    <ComboBox x:Name="SettingSelectProfil" Margin="4,0,4,4" SelectionChanged="SettingSelectProfil_SelectionChanged"
+                                      ItemsSource="{Binding profils.names}" 
+                                      SelectedItem="{Binding profils.last}" 
+                                      IsSynchronizedWithCurrentItem="True" 
+                                      Text="Válassz..." />
+
+                    <Button x:Name="SettingNewProfil"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
+                </StackPanel>
+            </Border>
+
+            <Border DockPanel.Dock="Left" Width="80" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
+                <Button x:Name="SettingSaveProfil" Height="70" Width="70" Click="SettingSaveProfil_Click">
+                    <TextBlock TextWrapping="Wrap" >Profil adatok mentése</TextBlock>
+                </Button>
+            </Border>
+
+            <Button x:Name="ProfilPrevButton" DockPanel.Dock="Right" Width="100" 
+                    IsEnabled="{Binding prevEnable}" Click="ProfilPrevNextButton_Click">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Tovább" />
+                    <TextBlock Width="40" Height="30" Background="{StaticResource right_arrow_blue}" />
+                </StackPanel>
+            </Button>
+            
+            <Button x:Name="ProfilNextButton" DockPanel.Dock="Right" Width="100" 
+                    IsEnabled="{Binding nextEnable}" Click="ProfilPrevNextButton_Click">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Előző" />
+                    <TextBlock Width="40" Height="30" Background="{StaticResource left_arrow_blue}" />
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="ProfilExitButton" DockPanel.Dock="Right" Width="100"
+                    IsEnabled="{Binding exitEnable}" Click="ProfilExitButton_Click">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Kilép" />
+                    <TextBlock Width="40" Height="30" Background="{StaticResource up_arrow_red}" />
+                </StackPanel>
+            </Button>
+        </DockPanel>
+    </Grid>
 </Window>
