@@ -28,7 +28,8 @@ namespace SendEmail2SelectedGroup
         public const  string appName = "SendEmail2SelectedGroup";
         public static string appDir;
 
-        SettingViewModel    setting;        
+        ProfilNames         profilNames;
+        ProfilViewModel     profilViewModel;        
         #endregion
 
         static MainWindow()
@@ -40,10 +41,10 @@ namespace SendEmail2SelectedGroup
         public MainWindow()
         {
             Profil.xmlDirectory = appDir;
-            setting = new SettingViewModel();
-            setting.profils = ProfilNames.LoadFromXML();
-            setting.profil  = Profil.LoadFromXML(setting.profils.last);
-
+            
+            profilNames = ProfilNames.LoadFromXML();
+            profilViewModel = new ProfilViewModel(profilNames);
+            
             InitializeComponent();
 
             // DataContext = setting;           --> MainGrid_Initialized
@@ -51,8 +52,7 @@ namespace SendEmail2SelectedGroup
 
         private void MainGrid_Initialized(object sender, EventArgs e)
         {
-            MainGrid.DataContext = setting;
-            //setting.Refresh();
+            MainGrid.DataContext = profilViewModel;
         }
 
         private void SettingSelectProfil_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -60,44 +60,56 @@ namespace SendEmail2SelectedGroup
             string? selectedName = (sender as ComboBox)?.SelectedItem as string;                                                                              // string text = ((sender as ComboBox).SelectedItem as ComboBoxItem).Content as string;
 
             Debug.Assert(selectedName != null);
+            Debug.Assert(profilViewModel.profils.last == selectedName);
 
-            if ((selectedName != null) && (setting?.profils?.last != null) && (selectedName != setting.profils.last))
-            {
-                setting.profil       = Profil.LoadFromXML(selectedName);
-                setting.profils.last = selectedName;
-
-                setting.Refresh();
-            }
+            profilViewModel.profil = Profil.LoadFromXML(selectedName);
         }
 
         private void SettingNewProfil_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Jelenleg nem adható hozzá új profil.", "Csoportos levélküldő");
+            //
+
+            var window = new NewProfilWindow(profilViewModel.profils.names);
+            var result = window.ShowDialog();
+
+            if (result ?? false)
+            {
+                //profilViewModel.profil = Profil.LoadFromXML(window.newName);
+                profilViewModel.profilNames.Add(window.newName);
+                profilViewModel.profilNameLast = window.newName;
+                profilViewModel.Refresh();
+
+                MessageBox.Show($"A kért új '{window.newName}' profil hozzáadva és kijelölve.", "Csoportos levélküldő");
+            }
+            else
+            {
+                MessageBox.Show("Ön nem adott hozzá új profilt.", "Csoportos levélküldő");
+            }
         }
 
         private void SettingSaveProfil_Click(object sender, RoutedEventArgs e)
         {
-            setting.profil.SaveAsXML(); 
-            setting.profils.SaveAsXML();
-            setting.modified = false;
+            profilViewModel.profil.SaveAsXML(); 
+            profilViewModel.profils.SaveAsXML();
+            profilViewModel.modified = false;
         }
 
         private void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
         {
             //TODO
 
-            setting.profil.dataFile = "betöltött";
+            profilViewModel.profil.dataFile = "betöltött";
 
-            setting.Refresh();
+            profilViewModel.Refresh();
         }
 
         private void SettingCreateSampleXlsx_Click(object sender, RoutedEventArgs e)
         {
             //TODO
 
-            setting.profil.dataFile = "létrehozott";
+            profilViewModel.profil.dataFile = "létrehozott";
 
-            setting.Refresh();
+            profilViewModel.Refresh();
         }
 
         private void ProfilPrevNextButton_Click(object sender, RoutedEventArgs e)

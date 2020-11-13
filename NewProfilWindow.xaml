@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SendEmail2SelectedGroup"
         mc:Ignorable="d"
-        Title="Új profil létrehozása" Height="320" Width="504">
+        Title="Új profil létrehozása" Height="331" Width="470">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -21,22 +21,33 @@
 
 
         <Border Grid.Row="1"  BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="4,0,4,4" Padding="4" Background="AntiqueWhite">
-
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Label Content="Az új profil neve:" Width="120"/>
+                    <TextBox Text="{Binding newName, UpdateSourceTrigger=PropertyChanged}"
+                             TextWrapping="Wrap" Width="200" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" 
+                             TextChanged="ProfilName_TextChanged" />
+                </StackPanel>
+                <TextBlock x:Name="profilNameError" Text="-errtext-" TextWrapping="Wrap"  Foreground="Red" HorizontalAlignment="Center" />
+                <TextBlock Text="A jelenleg létező profilok nevei" Margin="8,8,0,0" />
+                <ListBox ItemsSource="{Binding existNames}" SelectedItem="{Binding newName}"
+                    Height="auto" Foreground="Firebrick" Background="LightGoldenrodYellow" Margin="40,2,40,0"/>
+            </StackPanel>
         </Border>
 
 
         <Border Grid.Row="2"  BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="4,0,4,4" Padding="4" Background="BlanchedAlmond">
             <DockPanel x:Name="SettingBottom"  LastChildFill="False">
 
-                <Button x:Name="saveButton" DockPanel.Dock="Right" Width="100" 
-                    IsEnabled="{Binding saveEnable}">
+                <Button DockPanel.Dock="Right" Width="100" 
+                    IsEnabled="{Binding saveButtonEnabled}" Click="saveButton_Click">
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="Létrehozás" />
                         <TextBlock Width="30" Height="20" Background="{StaticResource right_arrow_blue}" />
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="canceButton" DockPanel.Dock="Right" Width="100" Margin="0,0,8,0"  >
+                <Button DockPanel.Dock="Right" Width="100" Margin="0,0,8,0" Click="cancelButton_Click" IsCancel="True" >
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="Mégsem" />
                         <TextBlock Width="30" Height="20" Background="{StaticResource up_arrow_red}" />

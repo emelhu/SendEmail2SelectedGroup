@@ -10,7 +10,7 @@
 >
 
     <Window.Resources>
-        <local:SettingViewModel x:Key="vm" />
+        <local:ProfilViewModel x:Key="vm" />
     </Window.Resources>
 
     <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=vm }" Initialized="MainGrid_Initialized" >
@@ -41,7 +41,7 @@
                             <DockPanel LastChildFill="False">
                                 <Label Width="180">Adatállomány:</Label>
                                 <TextBox Width="500" VerticalContentAlignment="Center" Foreground="DarkBlue"
-                                         Text="{Binding profil.dataFile}" />
+                                         Text="{Binding dataFile}" />
                                 
                                 <Button x:Name="SettingFindXlsx" Margin="12,0,0,0" Click="SettingFindXlsx_Click">Adatállomány keresése</Button>
                                 
@@ -131,18 +131,18 @@
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
 
                     <ComboBox x:Name="SettingSelectProfil" Margin="4,0,4,4" SelectionChanged="SettingSelectProfil_SelectionChanged"
-                                      ItemsSource="{Binding profils.names}" 
-                                      SelectedItem="{Binding profils.last}" 
-                                      IsSynchronizedWithCurrentItem="True" 
+                                      ItemsSource="{Binding profilNames}" 
+                                      SelectedItem="{Binding profilNameLast}" 
+                                      IsSynchronizedWithCurrentItem="True"  IsEnabled="{Binding exitEnable}"
                                       Text="Válassz..." />
 
-                    <Button x:Name="SettingNewProfil"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
+                    <Button x:Name="SettingNewProfil" IsEnabled="{Binding exitEnable}"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
                 </StackPanel>
             </Border>
 
             <Border DockPanel.Dock="Left" Width="80" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
                 <Button x:Name="SettingSaveProfil" Height="70" Width="70" Click="SettingSaveProfil_Click">
-                    <TextBlock TextWrapping="Wrap" >Profil adatok mentése</TextBlock>
+                    <TextBlock TextWrapping="Wrap" IsEnabled="{Binding modified}">Profil adatok mentése</TextBlock>
                 </Button>
             </Border>
 

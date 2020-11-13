@@ -12,8 +12,10 @@ namespace SendEmail2SelectedGroup
     [Serializable]
     public class Profil
     {
-        public  string name     { get; set; }
-        public  string dataFile { get; set; } 
+        #region Stored to XML
+        public  string name     ;
+        public  string dataFile ;
+        #endregion
 
         public static string? xmlDirectory;
         public static string  xmlDirectoryChecked => xmlDirectory ?? NullException();

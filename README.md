@@ -1,5 +1,5 @@
 # SendEmail2SelectedGroup
-First version only hungarian and hard coded information
+First version's language is only hungarian and it contains hard coded information.
 
 
 (c) eMeL / www.emel.hu
