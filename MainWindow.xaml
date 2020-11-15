@@ -11,6 +11,11 @@
 
     <Window.Resources>
         <local:ProfilViewModel x:Key="vm" />
+
+        <local:BooleanToVisibilityHiddenConverter   x:Key="boolToVisibilityHidden" />
+        <local:BooleanToVisibilityCollapseConverter x:Key="boolToVisibilityCollapse" />
+        <local:BooleanNegationConverter             x:Key="boolNegation" />
+
     </Window.Resources>
 
     <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=vm }" Initialized="MainGrid_Initialized" >
@@ -136,7 +141,7 @@
                                       IsSynchronizedWithCurrentItem="True"  IsEnabled="{Binding exitEnable}"
                                       Text="Válassz..." />
 
-                    <Button x:Name="SettingNewProfil" IsEnabled="{Binding exitEnable}"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
+                    <Button x:Name="SettingNewProfil" IsEnabled="{Binding Path=modified, Converter={StaticResource boolNegation}}"  Click="SettingNewProfil_Click" Margin="16,0,16,0">Új profil hozzáadása</Button>
                 </StackPanel>
             </Border>
 
@@ -145,6 +150,13 @@
                     <TextBlock TextWrapping="Wrap" IsEnabled="{Binding modified}">Profil adatok mentése</TextBlock>
                 </Button>
             </Border>
+
+            <StackPanel Orientation="Vertical" Width="200">
+                <TextBlock Text="Módosított adatok, nyomja meg a mentés gombot, amikor alkalmas." TextWrapping="Wrap" Margin="4"
+                           Visibility="{Binding modified, Converter={StaticResource boolToVisibilityHidden}}" />
+                <TextBlock  />
+                <TextBlock  />
+            </StackPanel>
 
             <Button x:Name="ProfilPrevButton" DockPanel.Dock="Right" Width="100" 
                     IsEnabled="{Binding prevEnable}" Click="ProfilPrevNextButton_Click">
@@ -163,7 +175,7 @@
             </Button>
 
             <Button x:Name="ProfilExitButton" DockPanel.Dock="Right" Width="100"
-                    IsEnabled="{Binding exitEnable}" Click="ProfilExitButton_Click">
+                    IsEnabled="{Binding Path=modified, Converter={StaticResource boolNegation}}" Click="ProfilExitButton_Click">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Kilép" />
                     <TextBlock Width="40" Height="30" Background="{StaticResource up_arrow_red}" />

@@ -32,9 +32,9 @@ namespace SendEmail2SelectedGroup
 
         #region only state
         private bool            _modified;
-        public  bool            modified            { get { return _modified; }                   set { _modified               = value; OnPropertyChanged(); OnPropertyChanged(nameof(exitEnable)); } }                               
+        public  bool            modified            { get { return _modified; }                   set { _modified               = value; OnPropertyChanged(); /*OnPropertyChanged(nameof(exitEnable)); */ } }                               
 
-        public bool             exitEnable          => ! modified;
+        //public bool             exitEnable          => ! modified;
         public bool             prevEnable          => true;
         public bool             nextEnable          => true;
         #endregion
@@ -49,7 +49,7 @@ namespace SendEmail2SelectedGroup
         public ProfilViewModel(ProfilNames profils)
         {
             _profils = profils;
-            _profil  = new Profil(profils.last);
+            _profil  = Profil.LoadFromXML(profils.last);
         }
 
         #region INotifyPropertyChanged
@@ -67,7 +67,12 @@ namespace SendEmail2SelectedGroup
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
 
-            if (!modified)
+            if (propertyName == nameof(profilNameLast))
+            {
+                _profil  = Profil.LoadFromXML(profilNameLast);
+            }
+
+            if ((propertyName != nameof(modified)) /*(propertyName != nameof(exitEnable)) &&*/)
             {
                 modified = true;
             }

@@ -55,14 +55,15 @@ namespace SendEmail2SelectedGroup
             MainGrid.DataContext = profilViewModel;
         }
 
+        #region events 
         private void SettingSelectProfil_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string? selectedName = (sender as ComboBox)?.SelectedItem as string;                                                                              // string text = ((sender as ComboBox).SelectedItem as ComboBoxItem).Content as string;
+        {   // ProfilViewModel does it
+            //string? selectedName = (sender as ComboBox)?.SelectedItem as string;                                                                              // string text = ((sender as ComboBox).SelectedItem as ComboBoxItem).Content as string;
 
-            Debug.Assert(selectedName != null);
-            Debug.Assert(profilViewModel.profils.last == selectedName);
+            //Debug.Assert(selectedName != null);
+            //Debug.Assert(profilViewModel.profils.last == selectedName);
 
-            profilViewModel.profil = Profil.LoadFromXML(selectedName);
+            //profilViewModel.profil = Profil.LoadFromXML(selectedName);
         }
 
         private void SettingNewProfil_Click(object sender, RoutedEventArgs e)
@@ -120,6 +121,30 @@ namespace SendEmail2SelectedGroup
         private void ProfilExitButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO
-        }       
+        }
+        #endregion
+
+        #region Data Binding
+
+        //[ValueConversion(typeof(bool), typeof(bool))]
+        //public class InverseBooleanConverter: IValueConverter
+        //{
+        //    public object Convert(object value, Type targetType, object parameter,
+        //        System.Globalization.CultureInfo culture)
+        //    {
+        //        if (targetType != typeof(bool))
+        //            throw new InvalidOperationException("The target must be a boolean");
+
+        //        return !(bool)value;
+        //    }
+
+        //    public object ConvertBack(object value, Type targetType, object parameter,
+        //        System.Globalization.CultureInfo culture)
+        //    {
+        //        throw new NotSupportedException();
+        //    }
+        //}
+
+        #endregion
     }
 }

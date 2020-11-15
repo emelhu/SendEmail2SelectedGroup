@@ -48,8 +48,7 @@ namespace SendEmail2SelectedGroup
 
             if (! File.Exists(filename))
             {
-                return new Profil(name);
-                
+                return new Profil(name);                
             }
 
             return SerializationExtensions.LoadFromXML<Profil>(filename) ?? new Profil(name);
