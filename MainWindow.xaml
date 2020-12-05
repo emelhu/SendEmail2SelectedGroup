@@ -26,9 +26,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TabControl Grid.Row="0" >
+        <TabControl Grid.Row="0" SelectionChanged="TabControl_SelectionChanged" >
         <!--#region Beállítások Tab -->
-        <TabItem Header="Beállítások" Background="DimGray" >
+        <TabItem x:Name="tabItemBeallitasok" Header="Beállítások" Background="DimGray" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -40,65 +40,103 @@
                 </TextBlock>
 
                 <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite">
-                    <StackPanel Orientation="Vertical">
-                        
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel LastChildFill="False">
-                                <Label Width="180">Adatállomány:</Label>
-                                <TextBox Width="500" VerticalContentAlignment="Center" Foreground="DarkBlue"
-                                         Text="{Binding dataFile}" />
-                                
-                                <Button x:Name="SettingFindXlsx" Margin="12,0,0,0" Click="SettingFindXlsx_Click">Adatállomány keresése</Button>
-                                
-                                <Button x:Name="SettingCreateSampleXlsx" DockPanel.Dock="Right" Click="SettingCreateSampleXlsx_Click">Minta XLSX létrehozása</Button>
-                                
-                            </DockPanel>
-                        </Border>
+                        <StackPanel Orientation="Vertical">
 
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel>
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="26" />
+                                        <RowDefinition Height="26" />
+                                    </Grid.RowDefinitions>
 
-                            </DockPanel>
-                        </Border>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="180" />
+                                        <ColumnDefinition Width="580" />
+                                        <ColumnDefinition Width="180" />
+                                        <ColumnDefinition Width="180" />
+                                    </Grid.ColumnDefinitions>
 
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel>
+                                    <Label   Grid.Row="0" Grid.Column="0">Adatállomány:</Label>
+                                    <TextBox Grid.Row="0" Grid.Column="1"  Foreground="DarkBlue" Background="LightBlue"
+                                             Text="{Binding dataFile}" TextChanged="TextBox_TextChanged" VerticalAlignment="Center" Height="24" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="14" />
+                                    <Button  Grid.Row="0" Grid.Column="2" x:Name="SettingLoadXlsx" Margin="8,0,0,0" Click="SettingLoadXlsx_Click" >Adatállomány beolvasása</Button>
+                                    <Button  Grid.Row="0" Grid.Column="3" x:Name="SettingFindXlsx" Margin="8,0,0,0" Click="SettingFindXlsx_Click">Adatállomány keresése</Button>
 
-                            </DockPanel>
-                        </Border>
+                                    <Label   Grid.Row="1" Grid.Column="1" Content="{Binding dataFileStatusText}" Foreground="DarkGray" />
+                                    <Button  Grid.Row="1" Grid.Column="2" x:Name="SettingCreateSampleXlsx" Margin="8,4,0,0" Click="SettingCreateSampleXlsx_Click">Minta XLSX létrehozása</Button>
+                                    <Button  Grid.Row="1" Grid.Column="3" x:Name="SettingCreateSampleCsv"  Margin="8,4,0,0" Click="SettingCreateSampleXlsx_Click">Minta CSV létrehozása</Button>
+                                </Grid>
+                            </Border>
 
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel>
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="{Binding aaa}"/>
 
-                            </DockPanel>
-                        </Border>
+                                </StackPanel>
+                            </Border>
 
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel>
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
 
-                            </DockPanel>
-                        </Border>
+                                </DockPanel>
+                            </Border>
 
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel>
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
 
-                            </DockPanel>
-                        </Border>
+                                </DockPanel>
+                            </Border>
 
-                        <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                            <DockPanel>
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
 
-                            </DockPanel>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
+                                </DockPanel>
+                            </Border>
+
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
+
+                                </DockPanel>
+                            </Border>
+
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
+
+                                </DockPanel>
+                            </Border>
+
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
+
+                                </DockPanel>
+                            </Border>
+
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
+
+                                </DockPanel>
+                            </Border>
+
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
+
+                                </DockPanel>
+                            </Border>
+
+                            <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
+                                <DockPanel>
+
+                                </DockPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
                
             </Grid>
         </TabItem>
         <!--#endregion-->
 
         <!--#region Adatállomány tartalmának megtekintése Tab -->
-        <TabItem Header="Adatállomány tartalmának megtekintése">
+            <TabItem x:Name="tabItemDataView" Header="Adatállomány tartalmának megtekintése">
             <Grid Background="#FFE5E5E5">
 
             </Grid>
@@ -106,7 +144,7 @@
         <!--#endregion-->
 
         <!--#region Címzettek kiválogatása Tab -->
-        <TabItem Header="Címzettek kiválogatása">
+            <TabItem x:Name="tabItemSelectTarget" Header="Címzettek kiválogatása">
             <Grid Background="#FFE5E5E5">
 
             </Grid>
@@ -114,7 +152,7 @@
         <!--#endregion-->
 
         <!--#region Levél szövegének összeállítása Tab -->
-        <TabItem Header="Levél szövegének összeállítása">
+            <TabItem x:Name="tabItemEditBody" Header="Levél szövegének összeállítása">
             <Grid Background="#FFE5E5E5">
 
             </Grid>
@@ -122,7 +160,7 @@
         <!--#endregion-->
 
         <!--#region Kör email elküldése Tab -->
-        <TabItem Header="Kör email elküldése">
+        <TabItem x:Name="tabItemSendEmails" Header="Kör email elküldése">
             <Grid Background="#FFE5E5E5">
 
             </Grid>
@@ -135,7 +173,7 @@
                 <StackPanel Orientation="Vertical">
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
 
-                    <ComboBox x:Name="SettingSelectProfil" Margin="4,0,4,4" SelectionChanged="SettingSelectProfil_SelectionChanged"
+                    <ComboBox x:Name="SettingSelectProfil" Margin="4,0,4,4" 
                                       ItemsSource="{Binding profilNames}" 
                                       SelectedItem="{Binding profilNameLast}" 
                                       IsSynchronizedWithCurrentItem="True"  IsEnabled="{Binding exitEnable}"

@@ -55,21 +55,11 @@ namespace SendEmail2SelectedGroup
             MainGrid.DataContext = profilViewModel;
         }
 
-        #region events 
-        private void SettingSelectProfil_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {   // ProfilViewModel does it
-            //string? selectedName = (sender as ComboBox)?.SelectedItem as string;                                                                              // string text = ((sender as ComboBox).SelectedItem as ComboBoxItem).Content as string;
+        #region events   
 
-            //Debug.Assert(selectedName != null);
-            //Debug.Assert(profilViewModel.profils.last == selectedName);
-
-            //profilViewModel.profil = Profil.LoadFromXML(selectedName);
-        }
-
+        #region profil
         private void SettingNewProfil_Click(object sender, RoutedEventArgs e)
         {
-            //
-
             var window = new NewProfilWindow(profilViewModel.profils.names);
             var result = window.ShowDialog();
 
@@ -94,25 +84,66 @@ namespace SendEmail2SelectedGroup
             profilViewModel.profils.SaveAsXML();
             profilViewModel.modified = false;
         }
+        #endregion
+
+        #region Datafile
+        private const string DataFileExtCsv    = ".csv";
+        private const string DataFileExtXlsx   = ".xlsx";
+        private const string DataFileExtFilter = "Excel (.xlsx)|*.xlsx|Text (.csv)|*.csv";
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            profilViewModel.dataFileStatusText = "Az adatállomány nem beolvasott!";
+            profilViewModel.emailData          = null;
+        }
+
+        private void SettingLoadXlsx_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
         private void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
         {
-            //TODO
+            var dlg         = new Microsoft.Win32.OpenFileDialog();                                                                                     // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/app-development/dialog-boxes-overview?view=netframeworkdesktop-4.8&viewFallbackFrom=netdesktop-5.0
+            dlg.FileName    = "*";  
+            dlg.DefaultExt  = DataFileExtXlsx;  
+            dlg.Filter      = DataFileExtFilter;  
 
-            profilViewModel.profil.dataFile = "betöltött";
+            Nullable<bool> result = dlg.ShowDialog();
 
-            profilViewModel.Refresh();
+            if (result == true)
+            {
+                profilViewModel.profil.dataFile = dlg.FileName;
+
+                //TODO *************************************************************************************************************************************************************************
+
+                profilViewModel.Refresh();
+            }  
         }
 
         private void SettingCreateSampleXlsx_Click(object sender, RoutedEventArgs e)
         {
-            //TODO
+            var extension = ((sender as Button) == SettingCreateSampleCsv) ? DataFileExtCsv : DataFileExtXlsx;
 
-            profilViewModel.profil.dataFile = "létrehozott";
+            var dlg         = new Microsoft.Win32.SaveFileDialog();                                                                                     // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/app-development/dialog-boxes-overview?view=netframeworkdesktop-4.8&viewFallbackFrom=netdesktop-5.0
+            dlg.FileName    = "*";  
+            dlg.DefaultExt  = extension;  
+            dlg.Filter      = DataFileExtFilter;  
 
-            profilViewModel.Refresh();
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                profilViewModel.profil.dataFile = dlg.FileName;
+
+                //TODO *************************************************************************************************************************************************************************
+
+                profilViewModel.Refresh();
+            }  
         }
+        #endregion
 
+        #region Tabs
         private void ProfilPrevNextButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO
@@ -122,6 +153,44 @@ namespace SendEmail2SelectedGroup
         {
             //TODO
         }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {            
+            if (e.Source is TabControl)                                                                                                                             //if this event fired from TabControl then enter
+            {
+                if (tabItemBeallitasok.IsSelected)
+                {
+                    //TODO *************************************************************************************************************************************************************************
+                }
+                else if (tabItemDataView.IsSelected)
+                {
+                    //TODO *************************************************************************************************************************************************************************
+                }
+                else if (tabItemSelectTarget.IsSelected)
+                {
+                    //TODO *************************************************************************************************************************************************************************
+                }
+                else if (tabItemEditBody.IsSelected)
+                {
+                    //TODO *************************************************************************************************************************************************************************
+                }
+                else if (tabItemSendEmails.IsSelected)
+                {
+                    //TODO *************************************************************************************************************************************************************************
+                }
+                else 
+                {
+                    throw new Exception("TabControl_SelectionChanged is fired and don't managed TabItem found!");
+                }
+                
+
+                e.Handled = true;
+            }
+        }
+        #endregion
+
+        
+
         #endregion
 
         #region Data Binding
@@ -146,5 +215,13 @@ namespace SendEmail2SelectedGroup
         //}
 
         #endregion
+
+        
     }
 }
+
+#region WPF component links
+/*
+https://stackoverflow.com/questions/2853276/wpf-list-of-viewmodels-bound-to-list-of-model-objects           (ObservableCollection<Item>  --> ObservableCollection<ItemViewModel>)
+*/
+#endregion
