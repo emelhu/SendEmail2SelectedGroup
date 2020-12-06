@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Linq;
 
 namespace SendEmail2SelectedGroup
 {
@@ -42,8 +43,11 @@ namespace SendEmail2SelectedGroup
         public  bool            prevEnable          => true;
         public  bool            nextEnable          => true;
 
-        private string          _dataFileStatusText  = "az adatfile státusa";
-        public  string          dataFileStatusText  { get { return _dataFileStatusText; }           set { _dataFileStatusText   = value; OnPropertyChanged(); } }
+        private string          _dataFileStatusText = "az adatfile státusa";
+        public  string          dataFileStatusText  { get { return _dataFileStatusText; }           set { _dataFileStatusText   = value; OnPropertyChanged(); } }       
+        
+        private string[]        saveNeedFields      = new string[] { nameof(name), nameof(dataFile), nameof(profilNameLast) };                              // Need save XML files
+
         #endregion
         #endregion
 
@@ -70,6 +74,11 @@ namespace SendEmail2SelectedGroup
             return new ObservableCollection<EmailData>(list);
         }
 
+        public void TrimDataFileName()
+        {
+            _profil.dataFile = _profil.dataFile.Trim();
+        }
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -85,14 +94,17 @@ namespace SendEmail2SelectedGroup
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
 
-            if (propertyName == nameof(profilNameLast))
+            if (!string.IsNullOrWhiteSpace(propertyName))
             {
-                _profil  = Profil.LoadFromXML(profilNameLast);
-            }
+                if (propertyName == nameof(profilNameLast))
+                {
+                    _profil = Profil.LoadFromXML(profilNameLast);
+                }
 
-            if ((propertyName != nameof(modified)) /*(propertyName != nameof(exitEnable)) &&*/)
-            {
-                modified = true;
+                if ((propertyName != nameof(modified)) && saveNeedFields.Contains(propertyName))
+                {
+                    modified = true;
+                }
             }
         }
         #endregion

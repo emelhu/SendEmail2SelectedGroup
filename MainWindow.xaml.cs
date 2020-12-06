@@ -15,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+
+using EPPlus.SimpleTable;
 //using System.Windows.Shapes;
 
 namespace SendEmail2SelectedGroup
@@ -97,17 +99,48 @@ namespace SendEmail2SelectedGroup
             profilViewModel.emailData          = null;
         }
 
-        private void SettingLoadXlsx_Click(object sender, RoutedEventArgs e)
+        private async void SettingLoadXlsx_Click(object sender, RoutedEventArgs e)
         {
+            var load = Task.Run(() =>
+            {
+                profilViewModel.emailData = null;
 
+                try
+                {
+                    profilViewModel.TrimDataFileName();
+
+                    if (File.Exists(profilViewModel.dataFile))
+                    {
+                        var newData = EmailDataManager.Get(profilViewModel.dataFile);
+
+                        profilViewModel.emailData = newData;
+
+                        return $"Beolvasva {newData.Count()} tételsor.";
+                    }
+                    else
+                    {
+                        return "Az állomány nem létezik, nem beolvasható!";
+                    }
+                }
+                catch (Exception e)
+                {
+                    return "ERROR! " + e.Message;                                                                                                                   // return error text
+                }
+            });
+
+            var result = await load;                                                                                                                    // var results = await Task.WhenAll(load, firstLongTask, secondLongTask, thirdLongTask);
+
+            profilViewModel.dataFileStatusText = result ?? ""; 
         }
 
-        private void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
+        private async void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
         {
-            var dlg         = new Microsoft.Win32.OpenFileDialog();                                                                                     // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/app-development/dialog-boxes-overview?view=netframeworkdesktop-4.8&viewFallbackFrom=netdesktop-5.0
-            dlg.FileName    = "*";  
-            dlg.DefaultExt  = DataFileExtXlsx;  
-            dlg.Filter      = DataFileExtFilter;  
+            var dlg              = new Microsoft.Win32.OpenFileDialog();                                                                                // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/app-development/dialog-boxes-overview?view=netframeworkdesktop-4.8&viewFallbackFrom=netdesktop-5.0
+            dlg.FileName         = "*.*";  
+            dlg.CheckPathExists  = true;
+            dlg.InitialDirectory = appDir;
+            dlg.DefaultExt       = DataFileExtXlsx;  
+            dlg.Filter           = DataFileExtFilter;  
 
             Nullable<bool> result = dlg.ShowDialog();
 
@@ -115,19 +148,26 @@ namespace SendEmail2SelectedGroup
             {
                 profilViewModel.profil.dataFile = dlg.FileName;
 
-                //TODO *************************************************************************************************************************************************************************
+                var load = Task.Run(() =>
+                {
+                    SettingLoadXlsx_Click(SettingFindXlsx, new RoutedEventArgs());
+                });
+
+                await load;
 
                 profilViewModel.Refresh();
             }  
         }
 
         private void SettingCreateSampleXlsx_Click(object sender, RoutedEventArgs e)
-        {
-            var extension = ((sender as Button) == SettingCreateSampleCsv) ? DataFileExtCsv : DataFileExtXlsx;
+        {   // SettingCreateSampleXlsx button OR SettingCreateSampleCsv button clicked
+            var isCSV       = ((sender as Button) == SettingCreateSampleCsv);
 
             var dlg         = new Microsoft.Win32.SaveFileDialog();                                                                                     // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/app-development/dialog-boxes-overview?view=netframeworkdesktop-4.8&viewFallbackFrom=netdesktop-5.0
-            dlg.FileName    = "*";  
-            dlg.DefaultExt  = extension;  
+            dlg.FileName    = $"{appName}_Sample";  
+            dlg.CheckPathExists  = true;
+            dlg.InitialDirectory = appDir;
+            dlg.DefaultExt  = (isCSV ? DataFileExtCsv : DataFileExtXlsx);  
             dlg.Filter      = DataFileExtFilter;  
 
             Nullable<bool> result = dlg.ShowDialog();
@@ -136,7 +176,36 @@ namespace SendEmail2SelectedGroup
             {
                 profilViewModel.profil.dataFile = dlg.FileName;
 
-                //TODO *************************************************************************************************************************************************************************
+                if (File.Exists(dlg.FileName))
+                {
+                    profilViewModel.dataFileStatusText = "Az állomány már létezik.";
+                }
+                else
+                {
+                    try
+                    {
+                        if (isCSV)
+                        {
+                            var    columns = Enum.GetNames(typeof(DatafileColumnDefinition));
+                            string header  = string.Join(',', columns);
+
+                            File.WriteAllText(dlg.FileName, header);
+                        }
+                        else
+                        {
+                            using (var excelTable = new SimpleExcelTable<DatafileColumnDefinition>(dlg.FileName, null))
+                            {
+
+                            }
+                        }
+
+                        profilViewModel.dataFileStatusText = "Új üres állomány létrehozva.";
+                    }
+                    catch (Exception e2)
+                    {
+                        profilViewModel.dataFileStatusText = "CREATE ERROR! " + e2.Message;
+                    }
+                }
 
                 profilViewModel.Refresh();
             }  
@@ -187,9 +256,13 @@ namespace SendEmail2SelectedGroup
                 e.Handled = true;
             }
         }
-        #endregion
 
-        
+        private void SettingBottom_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            profilViewModel.Refresh();
+        }
+
+        #endregion
 
         #endregion
 

@@ -28,6 +28,11 @@ namespace SendEmail2SelectedGroup
         [ColumnType(typeof(string), minLen :  0,  maxLen : 1000)]       group2      ,
         [ColumnType(typeof(string), minLen :  0,  maxLen : 1000)]       group3      ,
         [ColumnType(typeof(string), minLen :  0,  maxLen : 1000)]       group4      ,
-        [ColumnType(typeof(string), minLen :  0,  maxLen : 1000)]       group5
+        [ColumnType(typeof(string), minLen :  0,  maxLen : 1000)]       group5      ,
+        [ColumnType(typeof(string), minLen :  0,  maxLen : 3000)]       data1       ,
+        [ColumnType(typeof(string), minLen :  0,  maxLen : 3000)]       data2       ,
+        [ColumnType(typeof(string), minLen :  0,  maxLen : 3000)]       data3       ,
+        [ColumnType(typeof(string), minLen :  0,  maxLen : 3000)]       data4       ,
+        [ColumnType(typeof(string), minLen :  0,  maxLen : 3000)]       data5
     }
 }

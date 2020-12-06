@@ -36,7 +36,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="4" HorizontalAlignment="Center" >
-                    *  A körlevél összeállításának paramétereit, alapadatait határozhatja meg ezen a lapon  *
+                    |  A körlevél összeállításának paramétereit, alapadatait határozhatja meg ezen a lapon  |
                 </TextBlock>
 
                 <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite">
@@ -59,10 +59,10 @@
                                     <Label   Grid.Row="0" Grid.Column="0">Adatállomány:</Label>
                                     <TextBox Grid.Row="0" Grid.Column="1"  Foreground="DarkBlue" Background="LightBlue"
                                              Text="{Binding dataFile}" TextChanged="TextBox_TextChanged" VerticalAlignment="Center" Height="24" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="14" />
-                                    <Button  Grid.Row="0" Grid.Column="2" x:Name="SettingLoadXlsx" Margin="8,0,0,0" Click="SettingLoadXlsx_Click" >Adatállomány beolvasása</Button>
+                                    <Button  Grid.Row="0" Grid.Column="2" x:Name="SettingLoadXlsx" Margin="8,0,0,0" Click="SettingLoadXlsx_Click" Foreground="Red" >Adatállomány beolvasása</Button>
                                     <Button  Grid.Row="0" Grid.Column="3" x:Name="SettingFindXlsx" Margin="8,0,0,0" Click="SettingFindXlsx_Click">Adatállomány keresése</Button>
 
-                                    <Label   Grid.Row="1" Grid.Column="1" Content="{Binding dataFileStatusText}" Foreground="DarkGray" />
+                                    <Label   Grid.Row="1" Grid.Column="1" Content="{Binding dataFileStatusText}" Foreground="DarkGray" ToolTip="{Binding dataFileStatusText}" />
                                     <Button  Grid.Row="1" Grid.Column="2" x:Name="SettingCreateSampleXlsx" Margin="8,4,0,0" Click="SettingCreateSampleXlsx_Click">Minta XLSX létrehozása</Button>
                                     <Button  Grid.Row="1" Grid.Column="3" x:Name="SettingCreateSampleCsv"  Margin="8,4,0,0" Click="SettingCreateSampleXlsx_Click">Minta CSV létrehozása</Button>
                                 </Grid>
@@ -168,7 +168,7 @@
         <!--#endregion-->
     </TabControl>
 
-        <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False">
+        <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False" MouseUp="SettingBottom_MouseUp">
             <Border Width="200" DockPanel.Dock="Left" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
                 <StackPanel Orientation="Vertical">
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
@@ -183,7 +183,7 @@
                 </StackPanel>
             </Border>
 
-            <Border DockPanel.Dock="Left" Width="80" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
+            <Border DockPanel.Dock="Left" Width="80" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4" Margin="4,0,0,0">
                 <Button x:Name="SettingSaveProfil" Height="70" Width="70" Click="SettingSaveProfil_Click">
                     <TextBlock TextWrapping="Wrap" IsEnabled="{Binding modified}">Profil adatok mentése</TextBlock>
                 </Button>

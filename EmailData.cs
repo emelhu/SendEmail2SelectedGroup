@@ -20,25 +20,41 @@ namespace SendEmail2SelectedGroup
     {
         #region data
         public  string?     id      { get; set; }
+
         public  string?     name1   { get; set; }
         public  string?     name2   { get; set; }
         public  string?     name3   { get; set; }
+
         public  string?     email   { get; set; }
         public  string?     subject { get; set; }
         public  string?     body    { get; set; }
+
         public  string?     attach1 { get; set; }
         public  string?     attach2 { get; set; }
         public  string?     attach3 { get; set; }
         public  string?     attach4 { get; set; }
         public  string?     attach5 { get; set; }
+
         public  string?     group1  { get; set; }
         public  string?     group2  { get; set; }
         public  string?     group3  { get; set; }
         public  string?     group4  { get; set; }
         public  string?     group5  { get; set; }
 
-        private string[]?   _groups;
-        public  string[]    groups  => (_groups ?? GroupsFill());
+        public  string?     data1   { get; set; }
+        public  string?     data2   { get; set; }
+        public  string?     data3   { get; set; }
+        public  string?     data4   { get; set; }
+        public  string?     data5   { get; set; }
+
+        private string?[]?  _attachs;
+        public  string?[]   attachs  => (_attachs ?? AttachsFill());
+
+        private string?[]?  _groups;
+        public  string?[]   groups   => (_groups  ?? GroupsFill());
+
+        private string?[]?  _datas;
+        public  string?[]   datas    => (_datas   ?? DatasFill());
 
         private bool        _check;  
         public  bool        check   { get { return _check; }   set { _check = value; OnPropertyChanged(); } } 
@@ -55,13 +71,33 @@ namespace SendEmail2SelectedGroup
         /// <summary>
         /// WARNING: Assumed you will read the 'groups' property only after you have filled group1,group2,group3,group4,group5 properties
         /// </summary>
-        public string[] GroupsFill()
+        private string?[] GroupsFill()
         {
             var t = group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5;
 
             _groups = t.Split(GroupSeparators, StringSplitOptions.RemoveEmptyEntries);
             
             return _groups;
+        }
+
+        /// <summary>
+        /// WARNING: Assumed you will read the 'attachs' property only after you have filled group1,group2,group3,group4,group5 properties
+        /// </summary>
+        private string?[] AttachsFill()
+        {
+            _attachs = new string?[5] { attach1,attach2,attach3,attach4,attach5 };
+            
+            return _attachs;
+        }
+
+        /// <summary>
+        /// WARNING: Assumed you will read the 'datas' property only after you have filled group1,group2,group3,group4,group5 properties
+        /// </summary>
+        private string?[] DatasFill()                                                                                                                                        // OK, 'datas' is grammatically incorrect but uniform
+        {
+            _datas = new string?[5] { data1, data2, data3, data4, data5};
+            
+            return _datas;
         }
 
         #region INotifyPropertyChanged
@@ -126,22 +162,32 @@ namespace SendEmail2SelectedGroup
                         var rec = new EmailData();
 
                         rec.id            = (string)excelTable[i, DatafileColumnDefinition.id     ];
+
                         rec.name1         = (string)excelTable[i, DatafileColumnDefinition.name1  ];
                         rec.name2         = (string)excelTable[i, DatafileColumnDefinition.name2  ];
                         rec.name3         = (string)excelTable[i, DatafileColumnDefinition.name3  ];
+
                         rec.email         = (string)excelTable[i, DatafileColumnDefinition.email  ];
                         rec.subject       = (string)excelTable[i, DatafileColumnDefinition.subject];
                         rec.body          = (string)excelTable[i, DatafileColumnDefinition.body   ];
+
                         rec.attach1       = (string)excelTable[i, DatafileColumnDefinition.attach1];
                         rec.attach2       = (string)excelTable[i, DatafileColumnDefinition.attach2];
                         rec.attach3       = (string)excelTable[i, DatafileColumnDefinition.attach3];
                         rec.attach4       = (string)excelTable[i, DatafileColumnDefinition.attach4];
                         rec.attach5       = (string)excelTable[i, DatafileColumnDefinition.attach5];
+
                         rec.group1        = (string)excelTable[i, DatafileColumnDefinition.group1 ];
                         rec.group2        = (string)excelTable[i, DatafileColumnDefinition.group2 ];
                         rec.group3        = (string)excelTable[i, DatafileColumnDefinition.group3 ];
                         rec.group4        = (string)excelTable[i, DatafileColumnDefinition.group4 ];
                         rec.group5        = (string)excelTable[i, DatafileColumnDefinition.group5 ];
+
+                        rec.data1        = (string)excelTable[i, DatafileColumnDefinition.data1   ];
+                        rec.data2        = (string)excelTable[i, DatafileColumnDefinition.data2   ];
+                        rec.data3        = (string)excelTable[i, DatafileColumnDefinition.data3   ];
+                        rec.data4        = (string)excelTable[i, DatafileColumnDefinition.data4   ];
+                        rec.data5        = (string)excelTable[i, DatafileColumnDefinition.data5   ];
 
                         ret.Add(rec);
                     }
