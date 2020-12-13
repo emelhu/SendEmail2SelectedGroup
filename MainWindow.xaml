@@ -27,19 +27,23 @@
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="0" SelectionChanged="TabControl_SelectionChanged" >
-        <!--#region Beállítások Tab -->
-        <TabItem x:Name="tabItemBeallitasok" Header="Beállítások" Background="DimGray" >
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+            <!--#region Beállítások Tab -->
+            <TabItem x:Name="tabItemBeallitasok" Header="Beállítások" Background="DimGray" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="439*"/>
+                        <ColumnDefinition Width="158*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="4" HorizontalAlignment="Center" >
+                    <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="370,4,0,4" HorizontalAlignment="Left" >
                     |  A körlevél összeállításának paramétereit, alapadatait határozhatja meg ezen a lapon  |
-                </TextBlock>
+                    </TextBlock>
 
-                <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite">
+                    <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite" Grid.ColumnSpan="2">
                         <StackPanel Orientation="Vertical">
 
                             <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
@@ -130,43 +134,98 @@
                             </Border>
                         </StackPanel>
                     </ScrollViewer>
-               
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
 
-        <!--#region Adatállomány tartalmának megtekintése Tab -->
-            <TabItem x:Name="tabItemDataView" Header="Adatállomány tartalmának megtekintése">
-            <Grid Background="#FFE5E5E5">
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
 
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
+            <!--#region Adatállomány tartalmának megtekintése Tab -->
+            <TabItem x:Name="tabItemRawDataView" Header="Adatállomány tartalmának megtekintése">
+                <Grid Background="#FFE9E9E3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="26" />
+                        <RowDefinition Height="26" />
+                    </Grid.RowDefinitions>
 
-        <!--#region Címzettek kiválogatása Tab -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="230" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <DataGrid x:Name="dataRawView" ItemsSource="{Binding emailRawData}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" AutoGenerateColumns="False" Background="#FFE5E5E5">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Azon"          Binding="{Binding id}"       />
+                            <DataGridTextColumn Header="Név 1"         Binding="{Binding name1}"    />
+                            <DataGridTextColumn Header="Név 2"         Binding="{Binding name2}"    />
+                            <DataGridTextColumn Header="Név 3"         Binding="{Binding name3}"    />
+
+                            <DataGridTextColumn Header="email"         Binding="{Binding email}"    />
+                            <DataGridTextColumn Header="Subject"       Binding="{Binding subject}"  />
+                            <DataGridTextColumn Header="Body"          Binding="{Binding body}"     />
+
+                            <DataGridTextColumn Header="Csatol 1"      Binding="{Binding attach1}"  />
+                            <DataGridTextColumn Header="Csatol 2"      Binding="{Binding attach2}"  />
+                            <DataGridTextColumn Header="Csatol 3"      Binding="{Binding attach3}"  />
+                            <DataGridTextColumn Header="Csatol 4"      Binding="{Binding attach4}"  />
+                            <DataGridTextColumn Header="Csatol 5"      Binding="{Binding attach5}"  />
+
+                            <DataGridTextColumn Header="Csoport 1"     Binding="{Binding group1}"   />
+                            <DataGridTextColumn Header="Csoport 2"     Binding="{Binding group2}"   />
+                            <DataGridTextColumn Header="Csoport 3"     Binding="{Binding group3}"   />
+                            <DataGridTextColumn Header="Csoport 4"     Binding="{Binding group4}"   />
+                            <DataGridTextColumn Header="Csoport 5"     Binding="{Binding group5}"   />
+
+                            <DataGridTextColumn Header="Adat 1"        Binding="{Binding data1}"    />
+                            <DataGridTextColumn Header="Adat 2"        Binding="{Binding data2}"    />
+                            <DataGridTextColumn Header="Adat 3"        Binding="{Binding data3}"    />
+                            <DataGridTextColumn Header="Adat 4"        Binding="{Binding data4}"    />
+                            <DataGridTextColumn Header="Adat 5"        Binding="{Binding data5}"    />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    
+                    <Label Grid.Row="1" Grid.Column="0" Foreground="DarkGray">Rendezettség:</Label>
+                    <Label Grid.Row="2" Grid.Column="0" Foreground="DarkGray">Csoport szűrés:</Label>
+
+                    <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <ComboBox x:Name="RawViewOrderComboBox"       ItemsSource="{Binding emailDataOrderNames}" SelectedItem="{Binding selectedOrderName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon rendezettséget" />
+                        <Button x:Name="BtnRawOrderClear"  Margin="8,2,0,2"  Width="30"   Click="BtnRawOrderClear_Click">X</Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <ComboBox x:Name="RawViewFilterGroupComboBox" ItemsSource="{Binding allGroupNames}"       SelectedItem="{Binding selectedGroupName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon csoportot" />
+                        <Button x:Name="BtnRawFilterClear" Margin="8,2,0,2"  Width="30"   Click="BtnRawFilterClear_Click">X</Button>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
+
+            <!--#region Címzettek kiválogatása Tab -->
             <TabItem x:Name="tabItemSelectTarget" Header="Címzettek kiválogatása">
-            <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5">
 
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
 
-        <!--#region Levél szövegének összeállítása Tab -->
+            <!--#region Levél szövegének összeállítása Tab -->
             <TabItem x:Name="tabItemEditBody" Header="Levél szövegének összeállítása">
-            <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5">
 
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
 
-        <!--#region Kör email elküldése Tab -->
-        <TabItem x:Name="tabItemSendEmails" Header="Kör email elküldése">
-            <Grid Background="#FFE5E5E5">
+            <!--#region Kör email elküldése Tab -->
+            <TabItem x:Name="tabItemSendEmails" Header="Kör email elküldése">
+                <Grid Background="#FFE5E5E5">
 
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
-    </TabControl>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
+        </TabControl>
 
         <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False" MouseUp="SettingBottom_MouseUp">
             <Border Width="200" DockPanel.Dock="Left" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
@@ -203,7 +262,7 @@
                     <TextBlock Width="40" Height="30" Background="{StaticResource right_arrow_blue}" />
                 </StackPanel>
             </Button>
-            
+
             <Button x:Name="ProfilNextButton" DockPanel.Dock="Right" Width="100" 
                     IsEnabled="{Binding nextEnable}" Click="ProfilPrevNextButton_Click">
                 <StackPanel Orientation="Vertical">

@@ -89,21 +89,23 @@ namespace SendEmail2SelectedGroup
         #endregion
 
         #region Datafile
-        private const string DataFileExtCsv    = ".csv";
-        private const string DataFileExtXlsx   = ".xlsx";
-        private const string DataFileExtFilter = "Excel (.xlsx)|*.xlsx|Text (.csv)|*.csv";
+        private const string DataFileExtCsv     = ".csv";
+        private const string DataFileExtXlsx    = ".xlsx";
+        private const string DataFileExtFilter  = "Excel (.xlsx)|*.xlsx|Text (.csv)|*.csv";
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            profilViewModel.dataFileStatusText = "Az adatállomány nem beolvasott!";
-            profilViewModel.emailData          = null;
+            profilViewModel.dataFileStatusText  = "Az adatállomány nem beolvasott!";
+            profilViewModel.emailData           = null;
+            profilViewModel.emailRawData        = null;    
         }
 
         private async void SettingLoadXlsx_Click(object sender, RoutedEventArgs e)
         {
             var load = Task.Run(() =>
             {
-                profilViewModel.emailData = null;
+                profilViewModel.emailData       = null;
+                profilViewModel.emailRawData    = null;    
 
                 try
                 {
@@ -113,7 +115,8 @@ namespace SendEmail2SelectedGroup
                     {
                         var newData = EmailDataManager.Get(profilViewModel.dataFile);
 
-                        profilViewModel.emailData = newData;
+                        profilViewModel.emailData       = newData;
+                        profilViewModel.emailRawData    = newData;    
 
                         return $"Beolvasva {newData.Count()} tételsor.";
                     }
@@ -231,7 +234,7 @@ namespace SendEmail2SelectedGroup
                 {
                     //TODO *************************************************************************************************************************************************************************
                 }
-                else if (tabItemDataView.IsSelected)
+                else if (tabItemRawDataView.IsSelected)
                 {
                     //TODO *************************************************************************************************************************************************************************
                 }
@@ -262,6 +265,7 @@ namespace SendEmail2SelectedGroup
             profilViewModel.Refresh();
         }
 
+
         #endregion
 
         #endregion
@@ -289,7 +293,18 @@ namespace SendEmail2SelectedGroup
 
         #endregion
 
-        
+        #region RawDataView filter & sort
+       
+        private void BtnRawOrderClear_Click(object sender, RoutedEventArgs e)
+        {
+            profilViewModel.selectedOrderName = string.Empty;                                                                               // trigger in viewmodel
+        }
+
+        private void BtnRawFilterClear_Click(object sender, RoutedEventArgs e)
+        {
+            profilViewModel.selectedGroupName  = string.Empty;                                                                              // trigger in viewmodel
+        }
+        #endregion
     }
 }
 

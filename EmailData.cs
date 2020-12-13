@@ -47,13 +47,13 @@ namespace SendEmail2SelectedGroup
         public  string?     data4   { get; set; }
         public  string?     data5   { get; set; }
 
-        private string?[]?  _attachs;
+        private string?[]   _attachs;
         public  string?[]   attachs  => (_attachs ?? AttachsFill());
 
-        private string?[]?  _groups;
-        public  string?[]   groups   => (_groups  ?? GroupsFill());
+        private string[]    _groups;
+        public  string[]    groups   => (_groups  ?? GroupsFill());
 
-        private string?[]?  _datas;
+        private string?[]   _datas;
         public  string?[]   datas    => (_datas   ?? DatasFill());
 
         private bool        _check;  
@@ -71,11 +71,11 @@ namespace SendEmail2SelectedGroup
         /// <summary>
         /// WARNING: Assumed you will read the 'groups' property only after you have filled group1,group2,group3,group4,group5 properties
         /// </summary>
-        private string?[] GroupsFill()
+        private string[] GroupsFill()
         {
             var t = group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5;
 
-            _groups = t.Split(GroupSeparators, StringSplitOptions.RemoveEmptyEntries);
+            _groups = t.Split(GroupSeparators, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
             
             return _groups;
         }
@@ -98,6 +98,11 @@ namespace SendEmail2SelectedGroup
             _datas = new string?[5] { data1, data2, data3, data4, data5};
             
             return _datas;
+        }
+
+        public bool IsInGroup(string groupName)
+        {
+            return groups.Contains(groupName);
         }
 
         #region INotifyPropertyChanged
@@ -142,6 +147,8 @@ namespace SendEmail2SelectedGroup
         {
             using (var excelTable = new SimpleExcelTable<DatafileColumnDefinition>(filename, null))
             {         
+                excelTable.writeAtDispose = false;                                                                                                              // ReadOnly mode
+
                 if ((excelTable.rowCount < 1) || (excelTable.colCount < 1))
                 {
                     throw new Exception($"The content of datafile is invalid (empty) ! [{filename}]");
@@ -157,37 +164,39 @@ namespace SendEmail2SelectedGroup
 
                     var ret = new ObservableCollection<EmailData>();
 
-                    for (int i = 0; i < excelTable.rowCount; i++)
+                    var startRow = excelTable.hasHeaderRow ? 2 : 1;                                                                                             // Skip header if any
+
+                    for (int i = startRow; i < excelTable.rowCount; i++)
                     {
                         var rec = new EmailData();
 
-                        rec.id            = (string)excelTable[i, DatafileColumnDefinition.id     ];
-
-                        rec.name1         = (string)excelTable[i, DatafileColumnDefinition.name1  ];
-                        rec.name2         = (string)excelTable[i, DatafileColumnDefinition.name2  ];
-                        rec.name3         = (string)excelTable[i, DatafileColumnDefinition.name3  ];
-
-                        rec.email         = (string)excelTable[i, DatafileColumnDefinition.email  ];
-                        rec.subject       = (string)excelTable[i, DatafileColumnDefinition.subject];
-                        rec.body          = (string)excelTable[i, DatafileColumnDefinition.body   ];
-
-                        rec.attach1       = (string)excelTable[i, DatafileColumnDefinition.attach1];
-                        rec.attach2       = (string)excelTable[i, DatafileColumnDefinition.attach2];
-                        rec.attach3       = (string)excelTable[i, DatafileColumnDefinition.attach3];
-                        rec.attach4       = (string)excelTable[i, DatafileColumnDefinition.attach4];
-                        rec.attach5       = (string)excelTable[i, DatafileColumnDefinition.attach5];
-
-                        rec.group1        = (string)excelTable[i, DatafileColumnDefinition.group1 ];
-                        rec.group2        = (string)excelTable[i, DatafileColumnDefinition.group2 ];
-                        rec.group3        = (string)excelTable[i, DatafileColumnDefinition.group3 ];
-                        rec.group4        = (string)excelTable[i, DatafileColumnDefinition.group4 ];
-                        rec.group5        = (string)excelTable[i, DatafileColumnDefinition.group5 ];
-
-                        rec.data1        = (string)excelTable[i, DatafileColumnDefinition.data1   ];
-                        rec.data2        = (string)excelTable[i, DatafileColumnDefinition.data2   ];
-                        rec.data3        = (string)excelTable[i, DatafileColumnDefinition.data3   ];
-                        rec.data4        = (string)excelTable[i, DatafileColumnDefinition.data4   ];
-                        rec.data5        = (string)excelTable[i, DatafileColumnDefinition.data5   ];
+                        rec.id           = (excelTable[i, DatafileColumnDefinition.id     ] ?? string.Empty).ToString();
+                                           
+                        rec.name1        = (excelTable[i, DatafileColumnDefinition.name1  ] ?? string.Empty).ToString();
+                        rec.name2        = (excelTable[i, DatafileColumnDefinition.name2  ] ?? string.Empty).ToString();
+                        rec.name3        = (excelTable[i, DatafileColumnDefinition.name3  ] ?? string.Empty).ToString();
+                                           
+                        rec.email        = (excelTable[i, DatafileColumnDefinition.email  ] ?? string.Empty).ToString();
+                        rec.subject      = (excelTable[i, DatafileColumnDefinition.subject] ?? string.Empty).ToString();
+                        rec.body         = (excelTable[i, DatafileColumnDefinition.body   ] ?? string.Empty).ToString();
+                                           
+                        rec.attach1      = (excelTable[i, DatafileColumnDefinition.attach1] ?? string.Empty).ToString();
+                        rec.attach2      = (excelTable[i, DatafileColumnDefinition.attach2] ?? string.Empty).ToString();
+                        rec.attach3      = (excelTable[i, DatafileColumnDefinition.attach3] ?? string.Empty).ToString();
+                        rec.attach4      = (excelTable[i, DatafileColumnDefinition.attach4] ?? string.Empty).ToString();
+                        rec.attach5      = (excelTable[i, DatafileColumnDefinition.attach5] ?? string.Empty).ToString();
+                                           
+                        rec.group1       = (excelTable[i, DatafileColumnDefinition.group1 ] ?? string.Empty).ToString();
+                        rec.group2       = (excelTable[i, DatafileColumnDefinition.group2 ] ?? string.Empty).ToString();
+                        rec.group3       = (excelTable[i, DatafileColumnDefinition.group3 ] ?? string.Empty).ToString();
+                        rec.group4       = (excelTable[i, DatafileColumnDefinition.group4 ] ?? string.Empty).ToString();
+                        rec.group5       = (excelTable[i, DatafileColumnDefinition.group5 ] ?? string.Empty).ToString();
+                                           
+                        rec.data1        = (excelTable[i, DatafileColumnDefinition.data1  ] ?? string.Empty).ToString();
+                        rec.data2        = (excelTable[i, DatafileColumnDefinition.data2  ] ?? string.Empty).ToString();
+                        rec.data3        = (excelTable[i, DatafileColumnDefinition.data3  ] ?? string.Empty).ToString();
+                        rec.data4        = (excelTable[i, DatafileColumnDefinition.data4  ] ?? string.Empty).ToString();
+                        rec.data5        = (excelTable[i, DatafileColumnDefinition.data5  ] ?? string.Empty).ToString();
 
                         ret.Add(rec);
                     }
