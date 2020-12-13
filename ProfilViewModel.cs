@@ -53,7 +53,7 @@ namespace SendEmail2SelectedGroup
 
         #endregion
 
-        public string[] emailDataOrderNames { get; }        = new string[] { "id", "name1", "name2", "name3", "email" };
+        public string[] emailDataOrderNames { get; }        = new string[] { String.Empty, "id", "name1", "name2", "name3", "email" };
         public string[] allGroupNames       { get; set; }   = new string[0];
 
 
@@ -105,6 +105,8 @@ namespace SendEmail2SelectedGroup
                 }
             }
 
+            groups.Add(String.Empty);
+
             allGroupNames = groups.Distinct().ToArray();
         }
 
@@ -113,7 +115,7 @@ namespace SendEmail2SelectedGroup
             bool order  = ! string.IsNullOrWhiteSpace(selectedOrderName);
             bool filter = ! string.IsNullOrWhiteSpace(selectedGroupName);
 
-            if ((order && filter) || (emailData == null))
+            if ((! order && ! filter) || (emailData == null))
             {
                 emailRawData = emailData;
                 return;

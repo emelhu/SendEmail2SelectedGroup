@@ -153,7 +153,8 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <DataGrid x:Name="dataRawView" ItemsSource="{Binding emailRawData}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" AutoGenerateColumns="False" Background="#FFE5E5E5">
+                    <DataGrid x:Name="dataRawView" ItemsSource="{Binding emailRawData}" IsReadOnly="True" 
+                              Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" AutoGenerateColumns="False" Background="#FFE5E5E5">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Azon"          Binding="{Binding id}"       />
                             <DataGridTextColumn Header="Név 1"         Binding="{Binding name1}"    />
@@ -164,18 +165,18 @@
                             <DataGridTextColumn Header="Subject"       Binding="{Binding subject}"  />
                             <DataGridTextColumn Header="Body"          Binding="{Binding body}"     />
 
-                            <DataGridTextColumn Header="Csatol 1"      Binding="{Binding attach1}"  />
-                            <DataGridTextColumn Header="Csatol 2"      Binding="{Binding attach2}"  />
-                            <DataGridTextColumn Header="Csatol 3"      Binding="{Binding attach3}"  />
-                            <DataGridTextColumn Header="Csatol 4"      Binding="{Binding attach4}"  />
-                            <DataGridTextColumn Header="Csatol 5"      Binding="{Binding attach5}"  />
-
                             <DataGridTextColumn Header="Csoport 1"     Binding="{Binding group1}"   />
                             <DataGridTextColumn Header="Csoport 2"     Binding="{Binding group2}"   />
                             <DataGridTextColumn Header="Csoport 3"     Binding="{Binding group3}"   />
                             <DataGridTextColumn Header="Csoport 4"     Binding="{Binding group4}"   />
                             <DataGridTextColumn Header="Csoport 5"     Binding="{Binding group5}"   />
 
+                            <DataGridTextColumn Header="Csatol 1"      Binding="{Binding attach1}"  />
+                            <DataGridTextColumn Header="Csatol 2"      Binding="{Binding attach2}"  />
+                            <DataGridTextColumn Header="Csatol 3"      Binding="{Binding attach3}"  />
+                            <DataGridTextColumn Header="Csatol 4"      Binding="{Binding attach4}"  />
+                            <DataGridTextColumn Header="Csatol 5"      Binding="{Binding attach5}"  />
+                            
                             <DataGridTextColumn Header="Adat 1"        Binding="{Binding data1}"    />
                             <DataGridTextColumn Header="Adat 2"        Binding="{Binding data2}"    />
                             <DataGridTextColumn Header="Adat 3"        Binding="{Binding data3}"    />
