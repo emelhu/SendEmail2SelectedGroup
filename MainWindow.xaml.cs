@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,7 +32,9 @@ namespace SendEmail2SelectedGroup
         public static string appDir;
 
         ProfilNames         profilNames;
-        ProfilViewModel     profilViewModel;        
+        MainWindowViewModel viewModel;        
+        //Image               envelopeImage = new Image("pack://application:,,,/SendEmail2SelectedGroup;component/Images/email.png");        
+
         #endregion
 
         static MainWindow()
@@ -45,16 +48,18 @@ namespace SendEmail2SelectedGroup
             Profil.xmlDirectory = appDir;
             
             profilNames = ProfilNames.LoadFromXML();
-            profilViewModel = new ProfilViewModel(profilNames);
+            viewModel = new MainWindowViewModel(profilNames);
             
             InitializeComponent();
 
             // DataContext = setting;           --> MainGrid_Initialized
+
+            viewModel.modified = false;
         }
 
         private void MainGrid_Initialized(object sender, EventArgs e)
         {
-            MainGrid.DataContext = profilViewModel;
+            MainGrid.DataContext = viewModel;
         }
 
         #region events   
@@ -62,15 +67,16 @@ namespace SendEmail2SelectedGroup
         #region profil
         private void SettingNewProfil_Click(object sender, RoutedEventArgs e)
         {
-            var window = new NewProfilWindow(profilViewModel.profils.names);
+            var window = new NewProfilWindow(viewModel.profils.names);
             var result = window.ShowDialog();
 
             if (result ?? false)
             {
                 //profilViewModel.profil = Profil.LoadFromXML(window.newName);
-                profilViewModel.profilNames.Add(window.newName);
-                profilViewModel.profilNameLast = window.newName;
-                profilViewModel.Refresh();
+                viewModel.profilNames.Add(window.newName);
+                viewModel.profilNameLast = window.newName;
+                viewModel.modified       = true;
+                viewModel.Refresh();
 
                 MessageBox.Show($"A kért új '{window.newName}' profil hozzáadva és kijelölve.", "Csoportos levélküldő");
             }
@@ -82,9 +88,9 @@ namespace SendEmail2SelectedGroup
 
         private void SettingSaveProfil_Click(object sender, RoutedEventArgs e)
         {
-            profilViewModel.profil.SaveAsXML(); 
-            profilViewModel.profils.SaveAsXML();
-            profilViewModel.modified = false;
+            viewModel.profil.SaveAsXML(); 
+            viewModel.profils.SaveAsXML();
+            viewModel.modified = false;
         }
         #endregion
 
@@ -95,28 +101,32 @@ namespace SendEmail2SelectedGroup
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            profilViewModel.dataFileStatusText  = "Az adatállomány nem beolvasott!";
-            profilViewModel.emailData           = null;
-            profilViewModel.emailRawData        = null;    
+            viewModel.dataFileStatusText  = "Az adatállomány nem beolvasott!";
+            viewModel.emailData           = null;
+            viewModel.emailRawData        = null;   
+            viewModel.modified            = true;
+            e.Handled = false;
+
+            SetTabitemsEnabled();
         }
 
         private async void SettingLoadXlsx_Click(object sender, RoutedEventArgs e)
         {
             var load = Task.Run(() =>
             {
-                profilViewModel.emailData       = null;
-                profilViewModel.emailRawData    = null;    
+                viewModel.emailData       = null;
+                viewModel.emailRawData    = null;    
 
                 try
                 {
-                    profilViewModel.TrimDataFileName();
+                    viewModel.TrimDataFileName();
 
-                    if (File.Exists(profilViewModel.dataFile))
+                    if (File.Exists(viewModel.dataFile))
                     {
-                        var newData = EmailDataManager.Get(profilViewModel.dataFile);
+                        var newData = EmailDataManager.Get(viewModel.dataFile);
 
-                        profilViewModel.emailData       = newData;
-                        profilViewModel.emailRawData    = newData;    
+                        viewModel.emailData       = newData;
+                        viewModel.emailRawData    = newData;    
 
                         return $"Beolvasva {newData.Count()} tételsor.";
                     }
@@ -133,7 +143,8 @@ namespace SendEmail2SelectedGroup
 
             var result = await load;                                                                                                                    // var results = await Task.WhenAll(load, firstLongTask, secondLongTask, thirdLongTask);
 
-            profilViewModel.dataFileStatusText = result ?? ""; 
+            viewModel.dataFileStatusText = result ?? ""; 
+            SetTabitemsEnabled();
         }
 
         private async void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
@@ -149,7 +160,7 @@ namespace SendEmail2SelectedGroup
 
             if (result == true)
             {
-                profilViewModel.profil.dataFile = dlg.FileName;
+                viewModel.profil.dataFile = dlg.FileName;
 
                 var load = Task.Run(() =>
                 {
@@ -158,7 +169,7 @@ namespace SendEmail2SelectedGroup
 
                 await load;
 
-                profilViewModel.Refresh();
+                viewModel.Refresh();
             }  
         }
 
@@ -177,59 +188,115 @@ namespace SendEmail2SelectedGroup
 
             if (result == true)
             {
-                profilViewModel.profil.dataFile = dlg.FileName;
-
                 if (File.Exists(dlg.FileName))
                 {
-                    profilViewModel.dataFileStatusText = "Az állomány már létezik.";
+                    File.Copy(dlg.FileName, $"{dlg.FileName}~{DateTime.Now.ToString("yyyyMMdd_hhmmss")}.save");
+                    File.Delete(dlg.FileName);
                 }
-                else
+
+                try
                 {
-                    try
+                    if (isCSV)
                     {
-                        if (isCSV)
-                        {
-                            var    columns = Enum.GetNames(typeof(DatafileColumnDefinition));
-                            string header  = string.Join(',', columns);
-
-                            File.WriteAllText(dlg.FileName, header);
-                        }
-                        else
-                        {
-                            using (var excelTable = new SimpleExcelTable<DatafileColumnDefinition>(dlg.FileName, null))
-                            {
-
-                            }
-                        }
-
-                        profilViewModel.dataFileStatusText = "Új üres állomány létrehozva.";
+                        var    columns = Enum.GetNames(typeof(DatafileColumnDefinition));
+                        string header  = string.Join(',', columns);
+                            
+                        File.WriteAllText(dlg.FileName, header);
                     }
-                    catch (Exception e2)
+                    else
                     {
-                        profilViewModel.dataFileStatusText = "CREATE ERROR! " + e2.Message;
+                        using (var excelTable = new SimpleExcelTable<DatafileColumnDefinition>(dlg.FileName, null))
+                        {
+
+                        }
                     }
+
+                    viewModel.dataFileStatusText = "Új üres állomány létrehozva.";
+                    viewModel.profil.dataFile    = dlg.FileName;                                                                                      // trigger content read
                 }
-
-                profilViewModel.Refresh();
+                catch (Exception e2)
+                {
+                    viewModel.dataFileStatusText = "CREATE ERROR! " + e2.Message;
+                }
+                  
+                viewModel.Refresh();
             }  
         }
         #endregion
 
-        #region Tabs
-        private void ProfilPrevNextButton_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO
-        }
+        #region close window
 
         private void ProfilExitButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO
+            if (CloseEnabled())
+            {
+                Application.Current.Shutdown();
+            }
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = ! CloseEnabled();
+        }
+
+        private bool    lastCloseEnabledResult = false; 
+        private long    lastCloseEnabledCall   = 0; 
+
+        private bool CloseEnabled()
+        {
+            if ((Environment.TickCount64 - lastCloseEnabledCall) < 100)
+            {   // less then 0.1s after last call
+                return lastCloseEnabledResult;                                                                                                          // Patkolás, de ez van.
+            }
+
+            string warning = viewModel.modified ? "A profil adatai MÓDOSULTAK," + Environment.NewLine + "ha mentés nélkül lép ki, akkor ELVESZNEK!" + Environment.NewLine + Environment.NewLine : "";
+            string msgtext = $"{warning}Valóban kilép az alkalmazásból?"; 
+            string caption = "Kilépés az alkalmazásból"; 
+
+            MessageBoxResult result = MessageBox.Show(msgtext, caption, MessageBoxButton.YesNo); 
+			
+            lastCloseEnabledCall = Environment.TickCount64;
+
+            return (result == MessageBoxResult.Yes);
+        } 
+
+        #endregion
+
+        #region Tabs       
+        
+        private void ProfilPrevNextButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == profilNextButton)
+            {
+                if (viewModel.emailData == null)
+                {
+                    tabItemBeallitasok.IsSelected = true;
+                }
+                else if (mainTabControl.SelectedIndex < (mainTabControl.Items.Count - 1))
+                {
+                    mainTabControl.SelectedIndex++;                    
+                }
+            }
+            else
+            {
+                if (mainTabControl.SelectedIndex > 0)
+                {
+                    mainTabControl.SelectedIndex--;
+                }
+            }
+
+            viewModel.Refresh();
+        }
+
+        private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
             if (e.Source is TabControl)                                                                                                                             //if this event fired from TabControl then enter
             {
+                if (viewModel.emailData == null)
+                {
+                    tabItemBeallitasok.IsSelected = true;
+                }
+
                 if (tabItemBeallitasok.IsSelected)
                 {
                     //TODO *************************************************************************************************************************************************************************
@@ -240,7 +307,8 @@ namespace SendEmail2SelectedGroup
                 }
                 else if (tabItemSelectTarget.IsSelected)
                 {
-                    //TODO *************************************************************************************************************************************************************************
+                    viewModel.selectedGroupName = string.Empty;                                                                                             // clear for view all rows because EmailRawData is common for both datagrid                                                          
+                    viewModel.FillEmailRawData();
                 }
                 else if (tabItemEditBody.IsSelected)
                 {
@@ -250,22 +318,47 @@ namespace SendEmail2SelectedGroup
                 {
                     //TODO *************************************************************************************************************************************************************************
                 }
-                else 
+                else
                 {
                     throw new Exception("TabControl_SelectionChanged is fired and don't managed TabItem found!");
                 }
-                
+
 
                 e.Handled = true;
             }
         }
 
-        private void SettingBottom_MouseUp(object sender, MouseButtonEventArgs e)
+        private void SetTabitemsEnabled()
         {
-            profilViewModel.Refresh();
+            for (int loop = 0; loop < mainTabControl.Items.Count; loop++)
+            {
+                var tab = mainTabControl.Items[loop] as TabItem;
+
+                if (tab != null)
+                {
+                    var enable = true;
+
+                    if (viewModel.emailData == null)
+                    {
+                        if (loop > 0)
+                        {
+                            enable = false;
+                        }
+                        else
+                        {
+                            //TODO
+                        }
+                    }
+                                
+                    tab.IsEnabled = enable;
+                }
+            }
         }
 
-
+        private void SettingBottom_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            viewModel.Refresh();
+        }
         #endregion
 
         #endregion
@@ -297,12 +390,25 @@ namespace SendEmail2SelectedGroup
        
         private void BtnRawOrderClear_Click(object sender, RoutedEventArgs e)
         {
-            profilViewModel.selectedOrderName = string.Empty;                                                                               // trigger in viewmodel
+            viewModel.selectedOrderName = string.Empty;                                                                               // trigger in viewmodel
         }
 
         private void BtnRawFilterClear_Click(object sender, RoutedEventArgs e)
         {
-            profilViewModel.selectedGroupName  = string.Empty;                                                                              // trigger in viewmodel
+            viewModel.selectedGroupName  = string.Empty;                                                                              // trigger in viewmodel
+        }
+
+        #endregion
+
+        #region Selection DataView  
+
+        private void BtnSelectFilterAddRemove_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.selectedGroupName  = string.Empty;                                                                              // Clear view filter   
+
+            bool add = (sender == btnSelectFilterAdd);
+
+            // TODO
         }
         #endregion
     }

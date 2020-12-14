@@ -47,17 +47,22 @@ namespace SendEmail2SelectedGroup
         public  string?     data4   { get; set; }
         public  string?     data5   { get; set; }
 
-        private string?[]   _attachs;
+        private string?[]?  _attachs;
         public  string?[]   attachs  => (_attachs ?? AttachsFill());
 
-        private string[]    _groups;
+        private string[]?   _groups;
         public  string[]    groups   => (_groups  ?? GroupsFill());
 
-        private string?[]   _datas;
+        private string?[]?  _datas;
         public  string?[]   datas    => (_datas   ?? DatasFill());
 
-        private bool        _check;  
-        public  bool        check   { get { return _check; }   set { _check = value; OnPropertyChanged(); } } 
+        private bool        _userSelected;  
+        public  bool        userSelected     { get { return _userSelected; }    set { _userSelected = value;  OnPropertyChanged(); OnPropertyChanged(nameof(selected)); } } 
+
+        private bool        _groupSelected;  
+        public  bool        groupSelected    { get { return _groupSelected; }   set { _groupSelected = value; OnPropertyChanged(); OnPropertyChanged(nameof(selected)); } } 
+
+        public  bool        selected         => userSelected || groupSelected;
 
         #endregion
 

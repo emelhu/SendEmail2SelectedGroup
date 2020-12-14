@@ -7,8 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\email.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CommonStandardLibraries\eMeL_CommonStandardLibrary\eMeL_CommonStandardLibrary.csproj" />
     <ProjectReference Include="..\..\Commons\EPPlus_SimpleTable\EPPlus_SimpleTable\EPPlus.SimpleTable.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\email.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿<Window x:Class="SendEmail2SelectedGroup.MainWindow"
+﻿<Window x:Name="mainWindow" x:Class="SendEmail2SelectedGroup.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,16 +6,19 @@
         xmlns:local="clr-namespace:SendEmail2SelectedGroup"
         mc:Ignorable="d"
             
-        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200"        
+        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200" Closing="MainWindow_Closing"        
 >
 
     <Window.Resources>
-        <local:ProfilViewModel x:Key="vm" />
+        <local:MainWindowViewModel x:Key="vm" />
 
         <local:BooleanToVisibilityHiddenConverter   x:Key="boolToVisibilityHidden" />
         <local:BooleanToVisibilityCollapseConverter x:Key="boolToVisibilityCollapse" />
         <local:BooleanNegationConverter             x:Key="boolNegation" />
 
+        <SolidColorBrush x:Key="colorBlanchedAlmond" Color="YellowGreen" />
+
+        <BitmapImage x:Key="envelopeImage" UriSource="/SendEmail2SelectedGroup;component/Images/email.png" />
     </Window.Resources>
 
     <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=vm }" Initialized="MainGrid_Initialized" >
@@ -26,24 +29,25 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TabControl Grid.Row="0" SelectionChanged="TabControl_SelectionChanged" >
+        <TabControl Grid.Row="0" x:Name="mainTabControl" SelectionChanged="MainTabControl_SelectionChanged" >
             <!--#region Beállítások Tab -->
             <TabItem x:Name="tabItemBeallitasok" Header="Beállítások" Background="DimGray" >
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="439*"/>
-                        <ColumnDefinition Width="158*"/>
+                        <ColumnDefinition Width="221*"/>
+                        <ColumnDefinition Width="657*"/>
+                        <ColumnDefinition Width="316*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="370,4,0,4" HorizontalAlignment="Left" >
+                    <TextBlock Grid.Row="0" Background="BlanchedAlmond" Foreground="#FF948585" Margin="149,4,0,4" HorizontalAlignment="Left" Grid.Column="1" >
                     |  A körlevél összeállításának paramétereit, alapadatait határozhatja meg ezen a lapon  |
                     </TextBlock>
 
-                    <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite" Grid.ColumnSpan="2">
+                    <ScrollViewer Grid.Row="1" x:Name="SettingScroll" Margin="8,4,8,0" Foreground="#FFE2DDDD" Background="GhostWhite" Grid.ColumnSpan="3">
                         <StackPanel Orientation="Vertical">
 
                             <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
@@ -153,7 +157,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <DataGrid x:Name="dataRawView" ItemsSource="{Binding emailRawData}" IsReadOnly="True" 
+                    <DataGrid x:Name="dataRawView" ItemsSource="{Binding emailRawData}" IsReadOnly="True" CanUserAddRows="False"
                               Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" AutoGenerateColumns="False" Background="#FFE5E5E5">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Azon"          Binding="{Binding id}"       />
@@ -176,7 +180,7 @@
                             <DataGridTextColumn Header="Csatol 3"      Binding="{Binding attach3}"  />
                             <DataGridTextColumn Header="Csatol 4"      Binding="{Binding attach4}"  />
                             <DataGridTextColumn Header="Csatol 5"      Binding="{Binding attach5}"  />
-                            
+
                             <DataGridTextColumn Header="Adat 1"        Binding="{Binding data1}"    />
                             <DataGridTextColumn Header="Adat 2"        Binding="{Binding data2}"    />
                             <DataGridTextColumn Header="Adat 3"        Binding="{Binding data3}"    />
@@ -185,18 +189,18 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    
+
                     <Label Grid.Row="1" Grid.Column="0" Foreground="DarkGray">Rendezettség:</Label>
                     <Label Grid.Row="2" Grid.Column="0" Foreground="DarkGray">Csoport szűrés:</Label>
 
                     <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
                         <ComboBox x:Name="RawViewOrderComboBox"       ItemsSource="{Binding emailDataOrderNames}" SelectedItem="{Binding selectedOrderName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon rendezettséget" />
-                        <Button x:Name="BtnRawOrderClear"  Margin="8,2,0,2"  Width="30"   Click="BtnRawOrderClear_Click">X</Button>
+                        <Button x:Name="BtnRawOrderClear"  Margin="8,2,0,2"  Width="120"   Click="BtnRawOrderClear_Click">Rendezés nélkül</Button>
                     </StackPanel>
 
                     <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
                         <ComboBox x:Name="RawViewFilterGroupComboBox" ItemsSource="{Binding allGroupNames}"       SelectedItem="{Binding selectedGroupName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon csoportot" />
-                        <Button x:Name="BtnRawFilterClear" Margin="8,2,0,2"  Width="30"   Click="BtnRawFilterClear_Click">X</Button>
+                        <Button x:Name="BtnRawFilterClear" Margin="8,2,0,2"  Width="120"   Click="BtnRawFilterClear_Click">Szűrés nélkül</Button>
                     </StackPanel>
 
                 </Grid>
@@ -204,8 +208,82 @@
             <!--#endregion-->
 
             <!--#region Címzettek kiválogatása Tab -->
-            <TabItem x:Name="tabItemSelectTarget" Header="Címzettek kiválogatása">
-                <Grid Background="#FFE5E5E5">
+            <TabItem x:Name="tabItemSelectTarget" Header="Címzettek kiválogatása" Height="20" VerticalAlignment="Top">
+                <Grid Background="#FFE9E9E3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="26" />
+                        <RowDefinition Height="26" />
+                        <RowDefinition Height="26" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="230" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <DataGrid x:Name="dataSelectView" ItemsSource="{Binding emailRawData}" IsReadOnly="False" CanUserAddRows="False"
+                              Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" AutoGenerateColumns="False" Background="#FFE5E5E5">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding selected}" Value="True">
+                                        <Setter Property="Background" Value="SkyBlue"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding selected}" Value="False">
+                                        <Setter Property="Background" Value="AntiqueWhite"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Küldés"  Width="60" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{StaticResource envelopeImage}" Height="16" Visibility="{Binding selected, Converter={StaticResource boolToVisibilityHidden}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+
+                            <!--<DataGridCheckBoxColumn Header="Választott"     Binding="{Binding selected, Mode=OneWay}"                               IsReadOnly="True" />-->
+                            <DataGridCheckBoxColumn Header="Csoport"        Binding="{Binding groupSelected}"                                       IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Header="Egyedi"         Binding="{Binding userSelected, UpdateSourceTrigger=PropertyChanged }"  IsReadOnly="False" >
+                                <DataGridCheckBoxColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Background" Value="{StaticResource colorBlanchedAlmond}" />
+                                    </Style>
+                                </DataGridCheckBoxColumn.CellStyle>
+                            </DataGridCheckBoxColumn>
+
+                            <DataGridTextColumn     Header="Azon"           Binding="{Binding id}"                                                  IsReadOnly="True"  />
+                            <DataGridTextColumn     Header="Név 1"          Binding="{Binding name1}"                                               IsReadOnly="True"  />
+                            <DataGridTextColumn     Header="Név 2"          Binding="{Binding name2}"                                               IsReadOnly="True"  />
+                            <DataGridTextColumn     Header="Név 3"          Binding="{Binding name3}"                                               IsReadOnly="True"  />
+
+                            <DataGridTextColumn     Header="email"          Binding="{Binding email}"                                               IsReadOnly="True"  />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+
+                    <Label Grid.Row="1" Grid.Column="0" Foreground="DarkGray">Rendezettség:</Label>
+                    <Label Grid.Row="2" Grid.Column="0" Foreground="DarkGray">Csoport hozzáadása, kivétele a listából:</Label>
+                    <Label Grid.Row="3" Grid.Column="0" Foreground="DarkGray">Körlevélbe kerülés csoport szabályok:</Label>
+
+                    <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <ComboBox x:Name="selectViewOrderComboBox"       ItemsSource="{Binding emailDataOrderNames}" SelectedItem="{Binding selectedOrderName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon rendezettséget" />
+                        <Button x:Name="btnSelectOrderClear"  Margin="8,2,0,2"  Width="120" Click="BtnRawOrderClear_Click" >Rendezés nélkül</Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                        <ComboBox x:Name="selectViewFilterGroupComboBox" ItemsSource="{Binding allGroupNames}"       SelectedItem="{Binding selectedGroupName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon csoportot" />
+                        <Button x:Name="btnSelectFilterAdd"    Margin="8,2,0,2"   Width="160" Click="BtnSelectFilterAddRemove_Click" >Csoporttag hozzáadása</Button>
+                        <Button x:Name="btnSelectFilterRemove" Margin="8,2,0,2"   Width="160" Click="BtnSelectFilterAddRemove_Click" >Csoporttag kihagyása</Button>
+                        <Button x:Name="btnSelectFilterClear"  Margin="50,2,0,2"  Width="160" Click="BtnRawOrderClear_Click"         >Szabályok törlése</Button>
+                    </StackPanel>
+
+                    <Label Grid.Row="3" Grid.Column="1" Foreground="Blue">+csop +csop -csop</Label>
 
                 </Grid>
             </TabItem>
@@ -228,7 +306,7 @@
             <!--#endregion-->
         </TabControl>
 
-        <DockPanel Grid.Row="2" x:Name="SettingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False" MouseUp="SettingBottom_MouseUp">
+        <DockPanel Grid.Row="2" x:Name="settingBottom"  Height="80" Background="#FFE2DDDD" Margin="4" LastChildFill="False" MouseUp="SettingBottom_MouseUp">
             <Border Width="200" DockPanel.Dock="Left" BorderBrush="#FF000000" BorderThickness="1" CornerRadius="4">
                 <StackPanel Orientation="Vertical">
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4">Profil kiválasztása</TextBlock>
@@ -253,26 +331,25 @@
                 <TextBlock Text="Módosított adatok, nyomja meg a mentés gombot, amikor alkalmas." TextWrapping="Wrap" Margin="4"
                            Visibility="{Binding modified, Converter={StaticResource boolToVisibilityHidden}}" />
                 <TextBlock  />
-                <TextBlock  />
             </StackPanel>
-
-            <Button x:Name="ProfilPrevButton" DockPanel.Dock="Right" Width="100" 
-                    IsEnabled="{Binding prevEnable}" Click="ProfilPrevNextButton_Click">
+            
+            <Button x:Name="profilNextButton" DockPanel.Dock="Right" Width="100" 
+                    IsEnabled="{Binding nextEnable}" Click="ProfilPrevNextButton_Click">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Tovább" />
+                    <TextBlock Text="Következő" />
                     <TextBlock Width="40" Height="30" Background="{StaticResource right_arrow_blue}" />
                 </StackPanel>
             </Button>
 
-            <Button x:Name="ProfilNextButton" DockPanel.Dock="Right" Width="100" 
-                    IsEnabled="{Binding nextEnable}" Click="ProfilPrevNextButton_Click">
+            <Button x:Name="profilPrevButton" DockPanel.Dock="Right" Width="100" 
+                    IsEnabled="{Binding prevEnable}" Click="ProfilPrevNextButton_Click">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Előző" />
                     <TextBlock Width="40" Height="30" Background="{StaticResource left_arrow_blue}" />
                 </StackPanel>
             </Button>
 
-            <Button x:Name="ProfilExitButton" DockPanel.Dock="Right" Width="100"
+            <Button x:Name="profilExitButton" DockPanel.Dock="Right" Width="100"
                     IsEnabled="{Binding Path=modified, Converter={StaticResource boolNegation}}" Click="ProfilExitButton_Click">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Kilép" />

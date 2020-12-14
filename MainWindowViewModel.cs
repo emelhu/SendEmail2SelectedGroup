@@ -7,10 +7,11 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Linq;
+using System.Drawing;
 
 namespace SendEmail2SelectedGroup
 {
-    public class ProfilViewModel : INotifyPropertyChanged 
+    public class MainWindowViewModel : INotifyPropertyChanged 
     {
         #region WPF GUI data
         #region load/save data
@@ -63,20 +64,32 @@ namespace SendEmail2SelectedGroup
         public  string  selectedGroupName    { get { return _selectedGroupName; }  set { _selectedGroupName    = value; FillEmailRawData(); OnPropertyChanged(); } }
         #endregion
 
-        public ProfilViewModel()                                                                                                // for design times
+        //public Bitmap emailImage { get; }
+
+        public MainWindowViewModel()                                                                                                // for design times
         {
             _profils        = new ProfilNames();
             _profil         = new Profil();
-            _emailData      = null;
-            _emailRawData   = null;
+            _emailData      = new ObservableCollection<EmailData>();
+            
+            _emailData.Add(new EmailData() { id = "1", name1 = "111111",    name2 = "asasasas", name3 = "vvvvvv",   email="aaaa@bbbb.hu",    userSelected = true });
+            _emailData.Add(new EmailData() { id = "2", name1 = "22222",     name2 = "xddedd",   name3 = "hhhhh",    email="bb@bbbb.hu"});
+            _emailData.Add(new EmailData() { id = "4", name1 = "444444444", name2 = "dddfff",   name3 = "iiii",     email = "ccccc@bbbb.hu", userSelected = true });
+            _emailData.Add(new EmailData() { id = "3", name1 = "3333",      name2 = "aaaassss", name3 = "eeee",     email="ddd@bbbb.hu"});
+
+            _emailRawData   = _emailData;   
+
+            //emailImage = new Bitmap(SendEmail2SelectedGroup.Resource.email);
         }
 
-        public ProfilViewModel(ProfilNames profils)
+        public MainWindowViewModel(ProfilNames profils)
         {
             _profils        = profils;
             _profil         = Profil.LoadFromXML(profils.last);
             _emailData      = GetEmailData(_profil.dataFile);
             _emailRawData   = _emailData;
+
+            //emailImage = new Bitmap(SendEmail2SelectedGroup.Resource.email);
         }
 
         private static ObservableCollection<EmailData> GetEmailData(string dataFile)
@@ -110,7 +123,7 @@ namespace SendEmail2SelectedGroup
             allGroupNames = groups.Distinct().ToArray();
         }
 
-        private void FillEmailRawData()
+        public void FillEmailRawData()
         {
             bool order  = ! string.IsNullOrWhiteSpace(selectedOrderName);
             bool filter = ! string.IsNullOrWhiteSpace(selectedGroupName);
