@@ -280,10 +280,10 @@
                         <ComboBox x:Name="selectViewFilterGroupComboBox" ItemsSource="{Binding allGroupNames}"       SelectedItem="{Binding selectedGroupName, Mode=TwoWay}" Width="400" HorizontalAlignment="Left" Text="Válasszon csoportot" />
                         <Button x:Name="btnSelectFilterAdd"    Margin="8,2,0,2"   Width="160" Click="BtnSelectFilterAddRemove_Click" >Csoporttag hozzáadása</Button>
                         <Button x:Name="btnSelectFilterRemove" Margin="8,2,0,2"   Width="160" Click="BtnSelectFilterAddRemove_Click" >Csoporttag kihagyása</Button>
-                        <Button x:Name="btnSelectFilterClear"  Margin="50,2,0,2"  Width="160" Click="BtnRawOrderClear_Click"         >Szabályok törlése</Button>
+                        <Button x:Name="btnSelectFilterClear"  Margin="50,2,0,2"  Width="160" Click="BtnSelectFilterAddRemove_Click" >Szabályok törlése</Button>
                     </StackPanel>
 
-                    <Label Grid.Row="3" Grid.Column="1" Foreground="Blue">+csop +csop -csop</Label>
+                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding selectedAddRemoveGroups}" ToolTip="{Binding selectedAddRemoveGroups}" Foreground="Blue"></Label>
 
                 </Grid>
             </TabItem>

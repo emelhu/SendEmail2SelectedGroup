@@ -57,14 +57,14 @@ namespace SendEmail2SelectedGroup
         public string[] emailDataOrderNames { get; }        = new string[] { String.Empty, "id", "name1", "name2", "name3", "email" };
         public string[] allGroupNames       { get; set; }   = new string[0];
 
-
-        private string  _selectedOrderName   = string.Empty;
-        private string  _selectedGroupName   = string.Empty;
+        private string _selectedOrderName    = string.Empty;
+        private string _selectedGroupName    = string.Empty;
         public  string  selectedOrderName    { get { return _selectedOrderName; }  set { _selectedOrderName    = value; FillEmailRawData(); OnPropertyChanged(); } }        
         public  string  selectedGroupName    { get { return _selectedGroupName; }  set { _selectedGroupName    = value; FillEmailRawData(); OnPropertyChanged(); } }
-        #endregion
 
-        //public Bitmap emailImage { get; }
+        public string  _selectedAddRemoveGroups     = string.Empty;
+        public string   selectedAddRemoveGroups     { get { return _selectedAddRemoveGroups; }  set { _selectedAddRemoveGroups    = value;  OnPropertyChanged(); } }        
+        #endregion
 
         public MainWindowViewModel()                                                                                                // for design times
         {
@@ -72,33 +72,23 @@ namespace SendEmail2SelectedGroup
             _profil         = new Profil();
             _emailData      = new ObservableCollection<EmailData>();
             
-            _emailData.Add(new EmailData() { id = "1", name1 = "111111",    name2 = "asasasas", name3 = "vvvvvv",   email="aaaa@bbbb.hu",    userSelected = true });
-            _emailData.Add(new EmailData() { id = "2", name1 = "22222",     name2 = "xddedd",   name3 = "hhhhh",    email="bb@bbbb.hu"});
-            _emailData.Add(new EmailData() { id = "4", name1 = "444444444", name2 = "dddfff",   name3 = "iiii",     email = "ccccc@bbbb.hu", userSelected = true });
-            _emailData.Add(new EmailData() { id = "3", name1 = "3333",      name2 = "aaaassss", name3 = "eeee",     email="ddd@bbbb.hu"});
+            _emailData.Add(new EmailData() { id = "1", name1 = "111111",    name2 = "asasasas", name3 = "vvvvvv",   email = "aaaa@bbbb.hu",   userSelected = true });
+            _emailData.Add(new EmailData() { id = "2", name1 = "22222",     name2 = "xddedd",   name3 = "hhhhh",    email = "bb@bbbb.hu"});
+            _emailData.Add(new EmailData() { id = "4", name1 = "444444444", name2 = "dddfff",   name3 = "iiii",     email = "ccccc@bbbb.hu",  userSelected = true });
+            _emailData.Add(new EmailData() { id = "3", name1 = "3333",      name2 = "aaaassss", name3 = "eeee",     email = "ddd@bbbb.hu"});
 
             _emailRawData   = _emailData;   
 
-            //emailImage = new Bitmap(SendEmail2SelectedGroup.Resource.email);
+            selectedAddRemoveGroups = "+group1 -gruop2 + group3";
         }
 
         public MainWindowViewModel(ProfilNames profils)
         {
-            _profils        = profils;
-            _profil         = Profil.LoadFromXML(profils.last);
-            _emailData      = GetEmailData(_profil.dataFile);
+            _emailData      = new ObservableCollection<EmailData>();
             _emailRawData   = _emailData;
 
-            //emailImage = new Bitmap(SendEmail2SelectedGroup.Resource.email);
-        }
-
-        private static ObservableCollection<EmailData> GetEmailData(string dataFile)
-        {
-            var list = new List<EmailData>();
-
-            //TODO **************************************************************************************************************************************************************************
-
-            return new ObservableCollection<EmailData>(list);
+            _profils        = profils;
+            _profil         = Profil.LoadFromXML(profils.last);           
         }
 
         public void TrimDataFileName()

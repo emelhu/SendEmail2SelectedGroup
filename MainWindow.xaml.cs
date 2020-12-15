@@ -52,9 +52,21 @@ namespace SendEmail2SelectedGroup
             
             InitializeComponent();
 
-            // DataContext = setting;           --> MainGrid_Initialized
-
             viewModel.modified = false;
+
+            //
+
+            Task.Run(() =>
+            {
+                try
+                { 
+                    Task.Delay(1000);
+                    SettingLoadXlsx_Click(this, new RoutedEventArgs());
+                }
+                catch  
+                {
+                }
+            });      
         }
 
         private void MainGrid_Initialized(object sender, EventArgs e)
@@ -404,11 +416,87 @@ namespace SendEmail2SelectedGroup
 
         private void BtnSelectFilterAddRemove_Click(object sender, RoutedEventArgs e)
         {
-            viewModel.selectedGroupName  = string.Empty;                                                                              // Clear view filter   
+            if (sender == btnSelectFilterClear)
+            {
+                viewModel.selectedAddRemoveGroups = string.Empty;
+                return;
+            }
 
-            bool add = (sender == btnSelectFilterAdd);
+            //
 
-            // TODO
+            if (! string.IsNullOrWhiteSpace(viewModel.selectedGroupName))
+            { 
+                bool add    = (sender == btnSelectFilterAdd);
+                var  lists  = GetSelectedAddRemoveGroupsList();
+
+                lists.removeList.Remove(viewModel.selectedGroupName);
+                lists.addList.Remove(viewModel.selectedGroupName);
+
+                if (add)
+                {
+                    lists.addList.Add(viewModel.selectedGroupName);
+                }
+                else
+                {
+                    lists.removeList.Add(viewModel.selectedGroupName);
+                }
+
+                SetSelectedAddRemoveGroupsList(lists.addList, lists.removeList);
+
+                viewModel.selectedGroupName  = string.Empty;                                                                              // Clear view filter   
+            }
+        }
+
+        private (List<string> addList, List<string> removeList) GetSelectedAddRemoveGroupsList()
+        {
+            var addList    = new List<string>();
+            var removeList = new List<string>();
+
+            var listItems  = viewModel.selectedAddRemoveGroups.Split(' ');
+
+            foreach (var listItem in listItems)
+            {
+                if (string.IsNullOrWhiteSpace(listItem))
+                {
+                    throw new ArgumentException("Internal error! GetSelectedAddRemoveGroupsList(): empty!");
+                }
+
+                if (listItem[0] == '+')
+                {
+                    addList.Add(listItem[1..]);
+                }
+                else if (listItem[0] == '-')
+                {
+                    removeList.Add(listItem[1..]);
+                }
+                else
+                {
+                    throw new ArgumentException("Internal error! GetSelectedAddRemoveGroupsList(): none '+', '-' !");
+                }
+            }
+
+            return (addList, removeList);        
+        }
+
+        private void SetSelectedAddRemoveGroupsList(List<string> addList, List<string> removeList)
+        {
+            var sb = new StringBuilder(1000);
+
+            foreach (var addItem in addList)
+            {
+                sb.Append('+');
+                sb.Append(addItem);
+                sb.Append(' ');
+            }
+
+            foreach (var removeItem in removeList)
+            {
+                sb.Append('-');
+                sb.Append(removeItem);
+                sb.Append(' ');
+            }
+
+            viewModel.selectedAddRemoveGroups = sb.ToString();
         }
         #endregion
     }
