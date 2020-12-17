@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Smith.WPF.HtmlEditor" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CommonStandardLibraries\eMeL_CommonStandardLibrary\eMeL_CommonStandardLibrary.csproj" />
     <ProjectReference Include="..\..\Commons\EPPlus_SimpleTable\EPPlus_SimpleTable\EPPlus.SimpleTable.csproj" />
   </ItemGroup>

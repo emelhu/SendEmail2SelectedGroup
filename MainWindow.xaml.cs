@@ -52,26 +52,24 @@ namespace SendEmail2SelectedGroup
             
             InitializeComponent();
 
-            viewModel.modified = false;
-
-            //
-
-            Task.Run(() =>
-            {
-                try
-                { 
-                    Task.Delay(1000);
-                    SettingLoadXlsx_Click(this, new RoutedEventArgs());
-                }
-                catch  
-                {
-                }
-            });      
+            viewModel.modified = false; 
         }
 
         private void MainGrid_Initialized(object sender, EventArgs e)
         {
-            MainGrid.DataContext = viewModel;
+               
+        }
+
+        private async void mainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainGrid.DataContext = viewModel;       
+
+            await Task.Delay(1000);
+            await LoadXlsxHelper(viewModel.dataFile);
+ 
+            SetTabitemsEnabled();
+
+            viewModel.modified = false; 
         }
 
         #region events   
@@ -124,6 +122,13 @@ namespace SendEmail2SelectedGroup
 
         private async void SettingLoadXlsx_Click(object sender, RoutedEventArgs e)
         {
+            await LoadXlsxHelper(viewModel.dataFile);                                                                                                                    
+            
+            SetTabitemsEnabled();
+        }
+
+        private async Task LoadXlsxHelper(string filename)
+        {
             var load = Task.Run(() =>
             {
                 viewModel.emailData       = null;
@@ -153,10 +158,9 @@ namespace SendEmail2SelectedGroup
                 }
             });
 
-            var result = await load;                                                                                                                    // var results = await Task.WhenAll(load, firstLongTask, secondLongTask, thirdLongTask);
+            var result = await load;                                                                                                                                // var results = await Task.WhenAll(load, firstLongTask, secondLongTask, thirdLongTask);
 
             viewModel.dataFileStatusText = result ?? ""; 
-            SetTabitemsEnabled();
         }
 
         private async void SettingFindXlsx_Click(object sender, RoutedEventArgs e)
@@ -322,7 +326,7 @@ namespace SendEmail2SelectedGroup
                     viewModel.selectedGroupName = string.Empty;                                                                                             // clear for view all rows because EmailRawData is common for both datagrid                                                          
                     viewModel.FillEmailRawData();
                 }
-                else if (tabItemEditBody.IsSelected)
+                else if (tabItemEditMail.IsSelected)
                 {
                     //TODO *************************************************************************************************************************************************************************
                 }
@@ -419,6 +423,15 @@ namespace SendEmail2SelectedGroup
             if (sender == btnSelectFilterClear)
             {
                 viewModel.selectedAddRemoveGroups = string.Empty;
+
+                if (viewModel.emailData != null)
+                {
+                    foreach (var item in viewModel.emailData)
+                    {
+                        item.groupSelected = false;
+                    }
+                }
+
                 return;
             }
 
@@ -442,8 +455,38 @@ namespace SendEmail2SelectedGroup
                 }
 
                 SetSelectedAddRemoveGroupsList(lists.addList, lists.removeList);
+                 
 
-                viewModel.selectedGroupName  = string.Empty;                                                                              // Clear view filter   
+                if (viewModel.emailData != null)                                                                                            // Set new groupSelected state
+                {
+                    foreach (var email in viewModel.emailData)
+                    {
+                        bool newSelected = false;
+
+                        foreach (var name in lists.addList)
+                        {
+                            if (email.IsInGroup(name))
+                            {
+                                newSelected = true;
+                                break;
+                            }
+                        }
+
+                        foreach (var name in lists.removeList)
+                        {
+                            if (email.IsInGroup(name))
+                            {
+                                newSelected = false;
+                                break;
+                            }
+                        }
+
+                        email.groupSelected = newSelected;
+                    }
+                }
+
+
+                viewModel.selectedGroupName  = string.Empty;                                                                                // Clear view filter  
             }
         }
 
@@ -452,26 +495,27 @@ namespace SendEmail2SelectedGroup
             var addList    = new List<string>();
             var removeList = new List<string>();
 
-            var listItems  = viewModel.selectedAddRemoveGroups.Split(' ');
-
-            foreach (var listItem in listItems)
+            if (! string.IsNullOrWhiteSpace(viewModel.selectedAddRemoveGroups))
             {
-                if (string.IsNullOrWhiteSpace(listItem))
-                {
-                    throw new ArgumentException("Internal error! GetSelectedAddRemoveGroupsList(): empty!");
-                }
+                var listItems = viewModel.selectedAddRemoveGroups.Split(' ');
 
-                if (listItem[0] == '+')
+                foreach (var listItem in listItems)
                 {
-                    addList.Add(listItem[1..]);
-                }
-                else if (listItem[0] == '-')
-                {
-                    removeList.Add(listItem[1..]);
-                }
-                else
-                {
-                    throw new ArgumentException("Internal error! GetSelectedAddRemoveGroupsList(): none '+', '-' !");
+                    if (! string.IsNullOrWhiteSpace(listItem))
+                    {                                           
+                        if (listItem[0] == '+')
+                        {
+                            addList.Add(listItem[1..]);
+                        }
+                        else if (listItem[0] == '-')
+                        {
+                            removeList.Add(listItem[1..]);
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Internal error! GetSelectedAddRemoveGroupsList(): none '+', '-' !");
+                        }
+                    }
                 }
             }
 
@@ -480,6 +524,9 @@ namespace SendEmail2SelectedGroup
 
         private void SetSelectedAddRemoveGroupsList(List<string> addList, List<string> removeList)
         {
+            addList.Sort();
+            removeList.Sort();
+
             var sb = new StringBuilder(1000);
 
             foreach (var addItem in addList)
@@ -499,11 +546,18 @@ namespace SendEmail2SelectedGroup
             viewModel.selectedAddRemoveGroups = sb.ToString();
         }
         #endregion
+
+        
     }
 }
 
 #region WPF component links
 /*
 https://stackoverflow.com/questions/2853276/wpf-list-of-viewmodels-bound-to-list-of-model-objects           (ObservableCollection<Item>  --> ObservableCollection<ItemViewModel>)
+
+https://www.nuget.org/packages/Smith.WPF.HtmlEditor/
+https://github.com/emelhu/SmithHtmlEditor
+
+
 */
 #endregion

@@ -53,6 +53,8 @@ namespace SendEmail2SelectedGroup
         private string[]?   _groups;
         public  string[]    groups   => (_groups  ?? GroupsFill());
 
+        public  string      groupsText => string.Join(",", groups);
+
         private string?[]?  _datas;
         public  string?[]   datas    => (_datas   ?? DatasFill());
 
@@ -80,7 +82,7 @@ namespace SendEmail2SelectedGroup
         {
             var t = group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5;
 
-            _groups = t.Split(GroupSeparators, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
+            _groups = t.Split(GroupSeparators, StringSplitOptions.RemoveEmptyEntries).Distinct().OrderBy(s => s).ToArray();
             
             return _groups;
         }

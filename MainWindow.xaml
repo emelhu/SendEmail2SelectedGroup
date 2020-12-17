@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SendEmail2SelectedGroup"
         mc:Ignorable="d"
             
-        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200" Closing="MainWindow_Closing"        
+        Title="Kör-email küldése kiválogatott csoporttagoknak --- GYERMEKKERT ALAPÍTVÁNYI ÓVODA --- (c) eMeL Bt. [www.emel.hu] --- ver: 1.00" Height="800" Width="1200" Closing="MainWindow_Closing" Loaded="mainWindow_Loaded"        
 >
 
     <Window.Resources>
@@ -21,8 +21,8 @@
         <BitmapImage x:Key="envelopeImage" UriSource="/SendEmail2SelectedGroup;component/Images/email.png" />
     </Window.Resources>
 
-    <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=vm }" Initialized="MainGrid_Initialized" >
-        <!-- MainWindow.xaml.cs / MainGrid_Initialized :  MainGrid.DataContext = viewmodel; -->
+    <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=vm }" >
+        <!-- MainWindow.xaml.cs / mainWindow_Loaded() :  MainGrid.DataContext = viewmodel; -->
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -263,6 +263,8 @@
                             <DataGridTextColumn     Header="Név 3"          Binding="{Binding name3}"                                               IsReadOnly="True"  />
 
                             <DataGridTextColumn     Header="email"          Binding="{Binding email}"                                               IsReadOnly="True"  />
+
+                            <DataGridTextColumn     Header="csoportok"      Binding="{Binding groupsText}"                                          IsReadOnly="True"  />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -290,9 +292,30 @@
             <!--#endregion-->
 
             <!--#region Levél szövegének összeállítása Tab -->
-            <TabItem x:Name="tabItemEditBody" Header="Levél szövegének összeállítása">
+            <TabItem x:Name="tabItemEditMail" Header="Levél szövegének összeállítása">
                 <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="48" />
+                    </Grid.RowDefinitions>
 
+                    <TabControl Grid.Row="0" x:Name="tabControlEditMail" Margin="8">
+                        <TabItem x:Name="tabItemEditMailSubject" Header="tárgy/subject">
+                            
+                        </TabItem>
+
+                        <TabItem x:Name="tabItemEditMailTextBody" Header="törzs/body text">
+
+                        </TabItem>
+
+                        <TabItem x:Name="tabItemEditMailHtmlBody" Header="törzs/body html">
+
+                        </TabItem>
+                    </TabControl>
+
+                    <Border Grid.Row="1" CornerRadius="8" Background="AliceBlue" Margin="8,0,8,8">
+                        
+                    </Border>
                 </Grid>
             </TabItem>
             <!--#endregion-->
