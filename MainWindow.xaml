@@ -299,9 +299,20 @@
                         <RowDefinition Height="48" />
                     </Grid.RowDefinitions>
 
-                    <TabControl Grid.Row="0" x:Name="tabControlEditMail" Margin="8">
-                        <TabItem x:Name="tabItemEditMailSubject" Header="tárgy/subject">
-                            
+                    <TabControl Grid.Row="0" x:Name="tabControlEditMail" Margin="8" >
+                        <TabItem x:Name="tabItemEditMailSubject" Header="tárgy/subject" Padding="8">
+                            <StackPanel Margin="16">
+                                <Label>Az email tárgya (subject)</Label>
+
+                                <Border Margin="8" BorderBrush="Aqua" BorderThickness="2">
+                                    <TextBlock x:Name="textSubject" Margin="8" FontSize="20" TextWrapping="Wrap" Foreground="Black"
+                                               Text="Lorem ipsum dolor, lorem isum dolor,Lorem ipsum dolor sit amet, lorem ipsum dolor sit amet " />
+                                </Border>
+                                
+                                <Label>A Gmail asztali alkalmazásban kb. 70 karakter, a mobiltelefonon kb 30 karakter látható egyszerre.</Label>
+                                <Label >Több sorba is írhat subject szöveget, de praktikus ha csak egyetlen sort ad meg. Egy-egy sor ne legyen hosszabb 60-70 karakternél, mert a vége nem látszik még monitoron sem.</Label>
+                            </StackPanel>
+
                         </TabItem>
 
                         <TabItem x:Name="tabItemEditMailTextBody" Header="törzs/body text">
