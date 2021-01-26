@@ -18,13 +18,21 @@ namespace SendEmail2SelectedGroup
         private Profil          _profil             { get; set; }
         private ProfilNames     _profils            { get; set; }
 
-        public  Profil          profil              { get { return _profil; }                    set { _profil          = value; Refresh(); } } 
-        public  ProfilNames     profils             { get { return _profils; }                   set { _profils         = value; Refresh(); } }
+        public  Profil          profil              { get { return _profil; }                    set { _profil              = value; Refresh(); } } 
+        public  ProfilNames     profils             { get { return _profils; }                   set { _profils             = value; Refresh(); } }
 
         #region Profil fields
-        public  string          name                { get { return _profil.name; }               set { _profil.name     = value; OnPropertyChanged(); } } 
-        public  string          dataFile            { get { return _profil.dataFile; }           set { _profil.dataFile = value; OnPropertyChanged(); OnPropertyChanged(nameof(dataFileStatusText)); } }
+        public  string          name                { get { return _profil.name; }               set { _profil.name         = value; OnPropertyChanged(); } } 
+        public  string          dataFile            { get { return _profil.dataFile; }           set { _profil.dataFile     = value; OnPropertyChanged(); OnPropertyChanged(nameof(dataFileStatusText)); } }
+        public  bool            textBody            { get { return _profil.textBody; }           set { _profil.textBody     = value; OnPropertyChanged(); } } 
+        public  string          testEmail           { get { return _profil.testEmail; }          set { _profil.testEmail    = value; OnPropertyChanged(); } } 
         #endregion
+
+        private string          _subject;
+        public  string          subject             { get { return _subject; }                   set { _subject             = value; OnPropertyChanged(); } } 
+
+        private string          _bodyContent;
+        public  string          bodyContent         { get { return _bodyContent; }               set { _bodyContent         = value; OnPropertyChanged(); } } 
 
         #region ProfilNames fields
         public  List<string>    profilNames         => _profils.names;  
@@ -32,16 +40,16 @@ namespace SendEmail2SelectedGroup
         #endregion
 
         private ObservableCollection<EmailData>?    _emailData;
-        public  ObservableCollection<EmailData>?    emailData { get { return _emailData; }       set { _emailData       = value; SetAllGroupNames(); Refresh(); } }      
+        public  ObservableCollection<EmailData>?    emailData { get { return _emailData; }       set { _emailData           = value; SetAllGroupNames(); Refresh(); } }      
 
         private ObservableCollection<EmailData>?    _emailRawData;
-        public  ObservableCollection<EmailData>?    emailRawData { get { return _emailRawData; } set { _emailRawData    = value; Refresh(); } } 
+        public  ObservableCollection<EmailData>?    emailRawData { get { return _emailRawData; } set { _emailRawData        = value; Refresh(); } } 
 
         #endregion
 
         #region only state
         private bool           _modified;
-        public  bool            modified            { get { return _modified; }                     set { _modified             = value; Refresh(); } }                               
+        public  bool            modified            { get { return _modified; }                     set { _modified         = value; Refresh(); } }                               
 
         //public bool             exitEnable          => ! modified;                                                                                        // Solved by "Converter={StaticResource boolNegation}"
         public  bool            prevEnable          => true;
@@ -50,7 +58,7 @@ namespace SendEmail2SelectedGroup
         private string          _dataFileStatusText = "az adatfile státusa";
         public  string          dataFileStatusText  { get { return _dataFileStatusText; }           set { _dataFileStatusText   = value; OnPropertyChanged(); } }       
         
-        private string[]        saveNeedFields      = new string[] { nameof(name), nameof(dataFile), nameof(profilNameLast) };                              // Need save XML files
+        private string[]        saveNeedFields      = new string[] { nameof(name), nameof(dataFile), nameof(profilNameLast), nameof(subject), nameof(bodyContent), nameof(textBody), nameof(testEmail) };                  // Need save XML files
 
         #endregion
 
@@ -79,6 +87,9 @@ namespace SendEmail2SelectedGroup
 
             _emailRawData   = _emailData;   
 
+            _subject        = "Minta subject szöveg";
+            _bodyContent    = "Minta adat levél szövege";
+
             selectedAddRemoveGroups = "+group1 -gruop2 + group3";
         }
 
@@ -88,7 +99,11 @@ namespace SendEmail2SelectedGroup
             _emailRawData   = _emailData;
 
             _profils        = profils;
-            _profil         = Profil.LoadFromXML(profils.last);           
+            _profil         = Profil.LoadFromXML(profils.last);    
+            
+            var     sb      = profil.LoadSubjectAndBody();
+            _subject        = sb.subject;
+            _bodyContent    = sb.body;
         }
 
         public void TrimDataFileName()

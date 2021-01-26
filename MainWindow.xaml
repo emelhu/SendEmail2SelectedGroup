@@ -77,8 +77,9 @@
                             </Border>
 
                             <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="{Binding aaa}"/>
+                                <StackPanel Orientation="Vertical" Margin="16,0,0,0" >
+                                    <RadioButton Content="Szimpla szöveges levéltörzs (plain text mail body)" GroupName="MailBodyFormat" IsChecked="{Binding textBody}" />
+                                    <RadioButton Content="Formázott szöveg levéltörzs (html mail body)"       GroupName="MailBodyFormat" IsChecked="{Binding Path=textBody, Converter={StaticResource boolNegation}}" />
 
                                 </StackPanel>
                             </Border>
@@ -97,7 +98,8 @@
 
                             <Border BorderBrush="Lavender" BorderThickness="1" CornerRadius="4" Margin="12,4,12,0" Padding="4,4,4,4">
                                 <DockPanel>
-
+                                    <Label>Minta illetve próba levél kiküldési cím:</Label>
+                                    <TextBox Text="{Binding testEmail}" />
                                 </DockPanel>
                             </Border>
 
@@ -305,8 +307,7 @@
                                 <Label>Az email tárgya (subject)</Label>
 
                                 <Border Margin="8" BorderBrush="Aqua" BorderThickness="2">
-                                    <TextBlock x:Name="textSubject" Margin="8" FontSize="20" TextWrapping="Wrap" Foreground="Black"
-                                               Text="Lorem ipsum dolor, lorem isum dolor,Lorem ipsum dolor sit amet, lorem ipsum dolor sit amet " />
+                                    <TextBox x:Name="textSubject" Margin="8" FontSize="20" TextWrapping="Wrap" Foreground="Black" Text="{Binding subject}" />
                                 </Border>
                                 
                                 <Label>A Gmail asztali alkalmazásban kb. 70 karakter, a mobiltelefonon kb 30 karakter látható egyszerre.</Label>
@@ -315,12 +316,16 @@
 
                         </TabItem>
 
-                        <TabItem x:Name="tabItemEditMailTextBody" Header="törzs/body text">
-
+                        <TabItem x:Name="tabItemEditMailTextBody" Header="törzs/body text" IsEnabled="{Binding textBody}" >
+                            <Border Margin="8" BorderBrush="Aqua" BorderThickness="2">
+                                <TextBox x:Name="textBodyContent_text" Margin="8" FontSize="20" TextWrapping="Wrap" Foreground="Black" Text="{Binding bodyContent}" />
+                            </Border>
                         </TabItem>
 
-                        <TabItem x:Name="tabItemEditMailHtmlBody" Header="törzs/body html">
-
+                        <TabItem x:Name="tabItemEditMailHtmlBody" Header="törzs/body html" IsEnabled="{Binding Path=textBody, Converter={StaticResource boolNegation}}" >
+                            <Border Margin="8" BorderBrush="Aqua" BorderThickness="2">
+                                <TextBox x:Name="textBodyContent_html" Margin="8" FontSize="20" TextWrapping="Wrap" Foreground="Black" Text="{Binding bodyContent}" />
+                            </Border>
                         </TabItem>
                     </TabControl>
 

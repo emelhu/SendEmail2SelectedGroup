@@ -101,6 +101,8 @@ namespace SendEmail2SelectedGroup
             viewModel.profil.SaveAsXML(); 
             viewModel.profils.SaveAsXML();
             viewModel.modified = false;
+
+            viewModel.profil.SaveSubjectAndBody(viewModel.subject, viewModel.bodyContent); 
         }
         #endregion
 
